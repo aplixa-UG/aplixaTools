@@ -1,0 +1,32 @@
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--top-bar-height);
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    background: var(--bg-nav);
+    color: var(--text-nav);
+}
+
+::deep .title {
+    font-weight: 900;
+    font-size: 1.5rem;
+    margin-inline: 2rem;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.menu-button {
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-nav);
+    margin-right: 1rem;
+    cursor: pointer
+}

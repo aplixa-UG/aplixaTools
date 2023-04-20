@@ -1,0 +1,16 @@
+﻿<PageTitle>PDFEdit - Kombinieren</PageTitle>
+
+<section>
+	<div class="file-upload">
+		<h6>Files</h6>
+		<div class="file-list">
+			@foreach (var file in fileSources) {
+				<FileEntry FileName="@file.Name"></FileEntry>
+			}
+		</div>
+		<label class="file-input" for="file-input">
+			<InputFile id="file-input" OnChange="@OnChange" multiple />
+			<Icon Href="@Icons.AddFile"></Icon>
+		</label>
+	</div>
+</section>

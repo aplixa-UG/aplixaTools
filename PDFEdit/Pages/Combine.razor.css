@@ -1,0 +1,37 @@
+﻿section {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.file-upload {
+    position: relative;
+    width: 380px;
+    border-right: 1px solid #d1d1d1;
+}
+
+.file-list {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    top: 5rem;
+    bottom: 5rem;
+    overflow: scroll;
+}
+
+.file-input {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    cursor: pointer;
+}
+    .file-input ::deep svg {
+        height: 2rem;
+        width: 2rem;
+    }
+
+    .file-input ::deep input {
+        display: none;
+    }
