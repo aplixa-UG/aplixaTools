@@ -13,4 +13,12 @@
 			<Icon Href="@Icons.AddFile"></Icon>
 		</label>
 	</div>
+    <div class="input-pages">
+        @foreach (var file in fileSources) {
+					<DocumentPages Document="@file" />
+        }
+	</div>
+    <div class="ouput-pages">
+		
+	</div>
 </section>

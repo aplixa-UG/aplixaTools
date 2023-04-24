@@ -2,8 +2,9 @@
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using PDFEdit.Components;
+using PDFEdit.Services;
 using PDFEdit.Shared;
+using PDFEdit.Extensions;
 
 namespace PDFEdit.Pages;
 
@@ -11,28 +12,26 @@ namespace PDFEdit.Pages;
 public partial class Combine
 {
     private List<PdfFile> fileSources = new();
-    private const int maxAllowedFiles = int.MaxValue;
     private string ErrorMessage;
 
-    async Task OnChange(InputFileChangeEventArgs e)
+    private async Task OnChange(InputFileChangeEventArgs e)
     {
         ErrorMessage = string.Empty;
-        if (e.FileCount > maxAllowedFiles)
+        foreach (var file in e.GetMultipleFiles(e.FileCount))
         {
-            ErrorMessage = $"Only {maxAllowedFiles} files can be uploaded";
-            return;
-        }
-        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
-        {
-            using var stream = file.OpenReadStream();
-            var pdf = new Document();
+            using var stream = file.OpenReadStream(int.MaxValue);
 
-            PdfWriter.GetInstance(pdf, stream);
+            var bytes = new byte[file.Size];
+
+            await stream.ReadAsync(bytes);
+
+            var reader = new PdfReader(bytes);
 
             fileSources.Add(new PdfFile
             {
                 Name = file.Name,
-                Content = pdf,
+                PageCount = reader.NumberOfPages,
+                Content = bytes
             });
         }
         StateHasChanged();

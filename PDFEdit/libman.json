@@ -1,5 +1,10 @@
 {
-  "version": "1.0",
-  "defaultProvider": "cdnjs",
-  "libraries": []
+    "version": "1.0",
+    "defaultProvider": "unpkg",
+    "libraries": [
+        {
+            "library": "pdfjs-dist@3.5.141",
+            "destination": "wwwroot/lib/pdfjs"
+        }
+    ]
 }

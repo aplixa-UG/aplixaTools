@@ -1,0 +1,9 @@
+<div class="container">
+    <span class="title">@Document.Name</span>
+    <div class="pages">
+        @foreach (var render in _pageRenders)
+        {
+            <img src="@render">
+        }
+    </div>
+</div>

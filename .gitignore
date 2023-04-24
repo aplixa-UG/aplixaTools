@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# LibMan libraries
+PDFEdit/wwwroot/lib
+
+# Compiled TS
+PDFEdit/wwwroot/js
