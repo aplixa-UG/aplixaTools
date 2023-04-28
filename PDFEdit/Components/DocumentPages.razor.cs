@@ -1,7 +1,6 @@
 using PDFEdit.Shared;
 using Microsoft.AspNetCore.Components;
 using PDFEdit.Services;
-using PDFEdit.Extensions;
 
 namespace PDFEdit.Components;
 
@@ -9,6 +8,9 @@ public partial class DocumentPages {
     [Inject] public JsInteropService JsInterop { get; set; }
 
     [Parameter] public PdfFile Document { get; set; }
+    [Parameter] public int Index { get; set; }
+    [Parameter] public Action<int, int> OnPageAdded { get; set; }
+    [Parameter] public Action<int> OnDocumentAdded { get; set; }
 
     private List<string> _pageRenders = new();
 

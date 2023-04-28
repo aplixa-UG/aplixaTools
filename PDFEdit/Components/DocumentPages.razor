@@ -1,9 +1,17 @@
 <div class="container">
     <span class="title">@Document.Name</span>
     <div class="pages">
-        @foreach (var render in _pageRenders)
-        {
-            <img src="@render">
-        }
+        @for (int i = 0; i < _pageRenders.Count; i++) {
+			var index = i;
+            <div @onclick="() => OnPageAdded(Index, index)" class="page">
+                <div class="overlay">
+                    <Icon Href="@Icons.Plus"/>
+                </div>
+			    <img src="@_pageRenders[i]">
+            </div>
+		}
     </div>
+    <a class="add-doc" @onclick="() => OnDocumentAdded(Index)">
+        <Icon Href="@Icons.PlusCircle"></Icon>
+    </a>
 </div>

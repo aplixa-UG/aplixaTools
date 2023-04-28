@@ -2,10 +2,11 @@
 
 <section>
 	<div class="file-upload">
-		<h6>Files</h6>
+		<h6>Dateien</h6>
 		<div class="file-list">
-			@foreach (var file in fileSources) {
-				<FileEntry FileName="@file.Name"></FileEntry>
+			@for (int i = 0; i < _fileSources.Count; i++) {
+				var index = i;
+				<FileEntry FileName="@_fileSources[i].Name" Index="index" OnDelete="FileEntryOnDelete"/>
 			}
 		</div>
 		<label class="file-input" for="file-input">
@@ -14,11 +15,43 @@
 		</label>
 	</div>
     <div class="input-pages">
-        @foreach (var file in fileSources) {
-					<DocumentPages Document="@file" />
-        }
+		@for (int i = 0; i < _fileSources.Count; i++)
+		{
+			var index = i;
+			<DocumentPages
+				Document="@_fileSources[i]"
+				Index="index"
+				OnPageAdded="async (a, b) => await DocumentPagesOnPageAdded(a, b)" 
+				OnDocumentAdded="async (a) => await DocumentPagesOnDocumentAdded(a)"
+			/>
+		}
 	</div>
-    <div class="ouput-pages">
-		
+    <div class="output-pages">
+		<div class="options">
+			<Dropdown Options="PageSizes.Sizes.Keys" Default="4" OnValueChanged="async (i) => await PageSizeOnChanged(i)" />
+			<Checkbox Label="Querformat" DefaultValue="false" ValueChanged="async (l) => await LandscapeOnChanged(l)" />
+			<TextInput DefaultValue="merge.pdf" Placeholder="Dateiname" ValueChanged="(newValue) => {}" />
+		</div>
+		<div class="preview">
+			@for (int i = 0; i < _outputDocumentPreviewPages.Count; i++) {
+				var index = i;
+				<div class="preview-image" @onclick="async () => await OutputPagesOnPageRemoved(index)">
+					<div class="overlay">
+						<Icon Href="@Icons.Minus"/>
+					</div>
+					<img src="@_outputDocumentPreviewPages[i]" />
+				</div>
+			}
+		</div>
+		<div class="d-flex flex-row gap-1">
+			<button class="btn btn-primary w-100" @onclick="ClearButtonOnClick">
+				<Icon Href="@Icons.TrashCan" />
+				Alle Entfernen
+			</button>
+			<button class="btn btn-primary w-100" @onclick="MergeButtonOnClick">
+				<Icon Href="@Icons.Download" />
+				Zusammenführen
+			</button>
+		</div>
 	</div>
 </section>

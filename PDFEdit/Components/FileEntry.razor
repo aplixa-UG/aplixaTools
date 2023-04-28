@@ -1,3 +1,6 @@
-﻿<div>
+﻿<div class="container">
 	<Icon Href="@Icons.PdfFile" /> @FileName
+	<a class="delete" @onclick="() => OnDelete(Index)">
+		<Icon Href="@Icons.TrashCan" />
+	</a>
 </div>

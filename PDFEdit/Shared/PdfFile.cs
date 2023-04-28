@@ -1,6 +1,4 @@
-﻿using iTextSharp.text;
-
-namespace PDFEdit.Shared;
+﻿namespace PDFEdit.Shared;
 
 public class PdfFile
 {

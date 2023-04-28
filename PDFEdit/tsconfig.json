@@ -15,10 +15,10 @@
       ],
       "noImplicitAny": true,
       "noImplicitReturns": true,
-      "typeRoots": [],
+      "typeRoots": [
+      ],
       "baseUrl": ".",
       "paths": {
-        "pdfjs": [ "wwwroot/lib/pdfjs" ]
       }
     },
     "include": [

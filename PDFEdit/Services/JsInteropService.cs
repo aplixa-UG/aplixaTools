@@ -18,10 +18,20 @@ public class JsInteropService : DefaultJsInteropService
     public async Task<string> PDFtoJPEG(byte[] pdf, int i, CancellationToken cancellationToken)
     {
         return await JsRuntime.InvokeAsync<string>(
-            Prefix + "pdfUtils.PDFtoJPEG",
+            "PDFtoJPEG",
             cancellationToken,
             pdf,
             i
+        );
+    }
+
+    public async Task DownloadByteArray(string fileName, byte[] bytes, CancellationToken cancellationToken)
+    {
+        await JsRuntime.InvokeVoidAsync(
+            Prefix + "utils.downloadByteArray",
+            cancellationToken,
+            fileName,
+            bytes
         );
     }
 }
