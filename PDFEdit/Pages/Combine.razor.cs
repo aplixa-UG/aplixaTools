@@ -88,7 +88,7 @@ public partial class Combine : IDisposable
         {
             return;
         }
-        await JsInterop.DownloadByteArray(_outputDocument.Name, _outputDocument.Content, CancellationToken.None);
+        await JsInterop.DownloadByteArrayAsync(_outputDocument.Name, _outputDocument.Content, CancellationToken.None);
     }
 
     private void ClearButtonOnClick()
@@ -118,6 +118,8 @@ public partial class Combine : IDisposable
 
     private async Task UpdateMerge()
     {
+        _previewCancellationTokenSource.Cancel();
+        _previewCancellationTokenSource = new();
         if (_inputDocuments.Count == 0)
         {
             _outputDocument = null;
@@ -129,7 +131,20 @@ public partial class Combine : IDisposable
         _outputDocumentPreviewPages.Clear();
         for (int i = 0; i < _outputDocument.PageCount; i++)
         {
-            _outputDocumentPreviewPages.Add(await JsInterop.PDFtoJPEG(_outputDocument.Content, i, _previewCancellationTokenSource.Token));
+            try {
+                var preview = await JsInterop.PDFtoJPEGAsync(_outputDocument.Content, i, _previewCancellationTokenSource.Token);
+                if (preview is not {})
+                {
+                    break;
+                }
+                _outputDocumentPreviewPages.Add(preview);
+            }
+            catch (TaskCanceledException) {
+                break;
+            }
+            catch {
+                throw;
+            }
         }
         StateHasChanged();
     }

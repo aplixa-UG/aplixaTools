@@ -15,8 +15,13 @@ public class JsInteropService : DefaultJsInteropService
     {
     }
 
-    public async Task<string> PDFtoJPEG(byte[] pdf, int i, CancellationToken cancellationToken)
+    public async Task<string> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested) 
+        {
+            return null;
+        }
+
         return await JsRuntime.InvokeAsync<string>(
             "PDFtoJPEG",
             cancellationToken,
@@ -25,8 +30,13 @@ public class JsInteropService : DefaultJsInteropService
         );
     }
 
-    public async Task DownloadByteArray(string fileName, byte[] bytes, CancellationToken cancellationToken)
+    public async Task DownloadByteArrayAsync(string fileName, byte[] bytes, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested) 
+        {
+            return;
+        }
+
         await JsRuntime.InvokeVoidAsync(
             Prefix + "utils.downloadByteArray",
             cancellationToken,

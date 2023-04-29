@@ -16,7 +16,7 @@ public partial class DocumentPages {
 
     protected override async Task OnInitializedAsync() {
         for (int i = 0; i < Document.PageCount; i++) {
-            _pageRenders.Add(await JsInterop.PDFtoJPEG(Document.Content, i, CancellationToken.None));
+            _pageRenders.Add(await JsInterop.PDFtoJPEGAsync(Document.Content, i, CancellationToken.None));
             StateHasChanged();
         }
     }
