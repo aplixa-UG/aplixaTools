@@ -2,6 +2,7 @@
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using PDFEdit.Components;
 using PDFEdit.Extensions;
 using PDFEdit.Services;
 using PDFEdit.Shared;
@@ -9,9 +10,11 @@ using PDFEdit.Shared;
 namespace PDFEdit.Pages;
 
 [Route(Routes.CombineTool)]
-public partial class Combine
+public partial class Combine : IDisposable
 {
     [Inject] public JsInteropService JsInterop { get; set; }
+
+    public Modal _confirmClearModal { get; set; }
 
     private List<PdfFile> _fileSources = new();
     private List<byte[]> _inputDocuments = new();
@@ -20,6 +23,9 @@ public partial class Combine
     private PdfFile _outputDocument;
     private Rectangle _pageSize = PageSize.A4;
     private bool _landscapeOrientation = false;
+    private string _outputDocumentFileName = "merge.pdf";
+
+    private CancellationTokenSource _previewCancellationTokenSource = new CancellationTokenSource();
 
     private async Task OnChange(InputFileChangeEventArgs e)
     {
@@ -64,7 +70,7 @@ public partial class Combine
     private async Task DocumentPagesOnPageAdded(int documentIndex, int pageIndex)
     {
         var doc = _fileSources[documentIndex];
-        var page = PdfUtils.ExtractPages(doc.Content, "", pageIndex, pageIndex + 1);
+        var page = PdfUtils.ExtractPages(doc.Content, pageIndex, pageIndex + 1);
         _inputDocuments.Add(page.Content);
         await UpdateMerge();
     }
@@ -87,41 +93,48 @@ public partial class Combine
 
     private void ClearButtonOnClick()
     {
-
+        _confirmClearModal.Show();
     }
 
     private async Task OutputPagesOnPageRemoved(int pageIndex)
     {
-        var firstHalf = PdfUtils.ExtractPages(_outputDocument.Content, "", 0, pageIndex);
-        var secondHalf = PdfUtils.ExtractPages(_outputDocument.Content, "", pageIndex + 1, _outputDocument.PageCount);
-        if (firstHalf.PageCount == 0)
-        {
-            _outputDocument = secondHalf;
-        }
-        else if (secondHalf.PageCount == 0)
-        {
-            _outputDocument = firstHalf;
-        }
-        else
-        {
-            _outputDocument = PdfUtils.MergePdfFiles(new() { firstHalf.Content, secondHalf.Content }, "merge.pdf", _pageSize, _landscapeOrientation);
-        }
+        _inputDocuments.RemoveAt(pageIndex);
         await UpdateMerge();
+    }
+
+    private async Task ConfirmClearOnClick() {
+        _inputDocuments.Clear();
+        await UpdateMerge();
+        _confirmClearModal.Hide();
+    }
+
+    private void FileNameOnValueChanged(string fileName) {
+        _outputDocumentFileName = fileName;
+
+        if (_outputDocument is {}) {
+            _outputDocument.Name = fileName;
+        }
     }
 
     private async Task UpdateMerge()
     {
         if (_inputDocuments.Count == 0)
         {
+            _outputDocument = null;
+            _outputDocumentPreviewPages.Clear();
             return;
         }
 
-        _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, "merge.pdf", _pageSize, _landscapeOrientation);
+        _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, _outputDocumentFileName, _pageSize, _landscapeOrientation);
         _outputDocumentPreviewPages.Clear();
         for (int i = 0; i < _outputDocument.PageCount; i++)
         {
-            _outputDocumentPreviewPages.Add(await JsInterop.PDFtoJPEG(_outputDocument.Content, i, CancellationToken.None));
+            _outputDocumentPreviewPages.Add(await JsInterop.PDFtoJPEG(_outputDocument.Content, i, _previewCancellationTokenSource.Token));
         }
         StateHasChanged();
+    }
+
+    public void Dispose() {
+        _previewCancellationTokenSource.Dispose();
     }
 }

@@ -47,6 +47,7 @@ section {
     position: relative;
     padding: 2rem;
     box-sizing: border-box;
+    min-height: fit-content;
 }
 
 h1:focus {

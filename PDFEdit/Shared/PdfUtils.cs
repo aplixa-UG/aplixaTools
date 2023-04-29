@@ -104,7 +104,7 @@ public static class PdfUtils
         };
     }
 
-    public static PdfFile ExtractPages(byte[] inputFile, string name, int startIndex, int endIndex)
+    public static PdfFile ExtractPages(byte[] inputFile, int startIndex, int endIndex, string name = "")
     {
         if (startIndex - endIndex == 0) {
             return new PdfFile()
@@ -122,7 +122,7 @@ public static class PdfUtils
         var copy = new PdfCopy(document, outputStream);
         document.Open();
 
-        for (int i = startIndex + 1; i < endIndex; i++)
+        for (int i = startIndex; i < endIndex; i++)
         {
             copy.AddPage(copy.GetImportedPage(reader, i + 1));
         }

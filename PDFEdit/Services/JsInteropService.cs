@@ -34,4 +34,20 @@ public class JsInteropService : DefaultJsInteropService
             bytes
         );
     }
+
+    public void ShowModal(string id)
+    {
+        JsRuntime.InvokeVoid(
+            Prefix + "modal.show",
+            id
+        );
+    }
+
+    public void HideModal(string id)
+    {
+        JsRuntime.InvokeVoid(
+            Prefix + "modal.hide",
+            id
+        );
+    }
 }

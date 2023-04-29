@@ -260,6 +260,13 @@
         "legacy.d.ts",
         "misc.d.ts"
       ]
+    },
+    {
+        "library": "@types/sizzle@2.3.3",
+        "destination": "wwwroot/lib/types/sizzle/",
+        "files": [
+          "index.d.ts"
+        ]
     }
   ]
 }

@@ -16,9 +16,11 @@
       "noImplicitAny": true,
       "noImplicitReturns": true,
       "typeRoots": [
+        "wwwroot/lib/types"
       ],
       "baseUrl": ".",
       "paths": {
+        "@popperjs/core": [ "wwwroot/lib/popperjs/core" ]
       }
     },
     "include": [

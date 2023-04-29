@@ -1,5 +1,15 @@
 ﻿<PageTitle>PDFEdit - Kombinieren</PageTitle>
 
+<Modal @ref="_confirmClearModal" Title="Bestätigen">
+    <Content>
+        <span>Wollen sie wirklich ihr gesamtes Dokument löschen?</span>
+    </Content>
+    <Footer>
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Nein</button>
+        <button type="button" class="btn btn-danger" @onclick="async _ => await ConfirmClearOnClick()">Ja</button>
+    </Footer>
+</Modal>
+
 <section>
 	<div class="file-upload">
 		<h6>Dateien</h6>
@@ -30,12 +40,12 @@
 		<div class="options">
 			<Dropdown Options="PageSizes.Sizes.Keys" Default="4" OnValueChanged="async (i) => await PageSizeOnChanged(i)" />
 			<Checkbox Label="Querformat" DefaultValue="false" ValueChanged="async (l) => await LandscapeOnChanged(l)" />
-			<TextInput DefaultValue="merge.pdf" Placeholder="Dateiname" ValueChanged="(newValue) => {}" />
+			<TextInput DefaultValue="@_outputDocumentFileName" Placeholder="Dateiname" ValueChanged="FileNameOnValueChanged" />
 		</div>
 		<div class="preview">
 			@for (int i = 0; i < _outputDocumentPreviewPages.Count; i++) {
 				var index = i;
-				<div class="preview-image" @onclick="async () => await OutputPagesOnPageRemoved(index)">
+				<div class="preview-image" @onclick="async _ => await OutputPagesOnPageRemoved(index)">
 					<div class="overlay">
 						<Icon Href="@Icons.Minus"/>
 					</div>
