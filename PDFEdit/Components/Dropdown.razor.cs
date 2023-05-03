@@ -22,4 +22,10 @@ public partial class Dropdown
         StateHasChanged();
         await OnValueChanged.InvokeAsync(SelectedIndex);
     }
+
+    public void Reset()
+    {
+        SelectedIndex = 0;
+        StateHasChanged();
+    }
 }

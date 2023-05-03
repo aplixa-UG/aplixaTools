@@ -1,10 +1,4 @@
-using System;
-using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using PDFEdit.Shared;
 
 namespace PDFEdit.Services;
 
@@ -17,7 +11,7 @@ public class JsInteropService : DefaultJsInteropService
 
     public async Task<string> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
     {
-        if (cancellationToken.IsCancellationRequested) 
+        if (cancellationToken.IsCancellationRequested)
         {
             return null;
         }
@@ -32,7 +26,7 @@ public class JsInteropService : DefaultJsInteropService
 
     public async Task DownloadByteArrayAsync(string fileName, byte[] bytes, CancellationToken cancellationToken)
     {
-        if (cancellationToken.IsCancellationRequested) 
+        if (cancellationToken.IsCancellationRequested)
         {
             return;
         }

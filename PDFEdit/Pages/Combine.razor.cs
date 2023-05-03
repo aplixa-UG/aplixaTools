@@ -3,7 +3,6 @@ using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using PDFEdit.Components;
-using PDFEdit.Extensions;
 using PDFEdit.Services;
 using PDFEdit.Shared;
 
@@ -14,8 +13,8 @@ public partial class Combine : IDisposable
 {
     [Inject] public JsInteropService JsInterop { get; set; }
 
-    public Modal _confirmClearModal { get; set; }
-    public PageSettingsModal _pageSettingsModal { get; set; }
+    public Modal ConfirmClearModal { get; set; }
+    public PageSettingsModal PageSettingsModal { get; set; }
 
     private List<PdfFile> _fileSources = new();
     private List<PdfFile> _inputDocuments = new();
@@ -27,7 +26,7 @@ public partial class Combine : IDisposable
     private bool _landscapeOrientation = false;
     private string _outputDocumentFileName = "merge.pdf";
 
-    private CancellationTokenSource _previewCancellationTokenSource = new CancellationTokenSource();
+    private CancellationTokenSource _previewCancellationTokenSource = new();
 
     private async Task OnChange(InputFileChangeEventArgs e)
     {
@@ -59,8 +58,6 @@ public partial class Combine : IDisposable
             {
                 Name = file.Name,
                 PageCount = reader.NumberOfPages,
-                PageSizes = pageSizes.ToArray(),
-                PageTransforms = pageTransforms,
                 Content = bytes
             });
         }
@@ -96,7 +93,8 @@ public partial class Combine : IDisposable
     private async Task DocumentPagesOnDocumentAdded(int documentIndex)
     {
         var doc = _fileSources[documentIndex];
-        for (int i = 0; i < doc.PageCount; i++) {
+        for (int i = 0; i < doc.PageCount; i++)
+        {
             var page = PdfUtils.ExtractPages(doc, i, i + 1);
             _inputDocuments.Add(page);
         }
@@ -114,7 +112,7 @@ public partial class Combine : IDisposable
 
     private void ClearButtonOnClick()
     {
-        _confirmClearModal.Show();
+        ConfirmClearModal.Show();
     }
 
     private async Task OutputPagesOnPageRemoved(int pageIndex)
@@ -126,19 +124,23 @@ public partial class Combine : IDisposable
     private void OutputPagesOnSettings(int pageIndex)
     {
         _selectedPage = pageIndex;
-        _pageSettingsModal.Show();
+        var transform = PdfUtils.GetPageTransform(_inputDocuments[pageIndex], 0);
+        PageSettingsModal.Show(transform.Angle);
     }
 
     private async Task ConfirmClearOnClick()
     {
         _inputDocuments.Clear();
         await UpdateMerge();
-        _confirmClearModal.Hide();
+        ConfirmClearModal.Hide();
     }
 
-    private async Task PageSettingsOnSave() 
+    private async Task PageSettingsOnSave()
     {
-        _inputDocuments[_selectedPage].PageTransforms[0].Angle = 90;
+        _inputDocuments[_selectedPage] = PdfUtils.TransformPage(_inputDocuments[_selectedPage], 0, new PdfTransform
+        {
+            Angle = PageSettingsModal.Rotation,
+        });
         await UpdateMerge();
     }
 
@@ -146,7 +148,8 @@ public partial class Combine : IDisposable
     {
         _outputDocumentFileName = fileName;
 
-        if (_outputDocument is {}) {
+        if (_outputDocument is { })
+        {
             _outputDocument.Name = fileName;
         }
     }
@@ -162,29 +165,33 @@ public partial class Combine : IDisposable
             return;
         }
 
-        _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, _outputDocumentFileName,  _landscapeOrientation);
+        _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, _outputDocumentFileName);
         _outputDocumentPreviewPages.Clear();
         for (int i = 0; i < _outputDocument.PageCount; i++)
         {
-            try {
+            try
+            {
                 var preview = await JsInterop.PDFtoJPEGAsync(_outputDocument.Content, i, _previewCancellationTokenSource.Token);
-                if (preview is not {})
+                if (preview is not { })
                 {
                     break;
                 }
                 _outputDocumentPreviewPages.Add(preview);
             }
-            catch (TaskCanceledException) {
+            catch (TaskCanceledException)
+            {
                 break;
             }
-            catch {
+            catch
+            {
                 throw;
             }
         }
         StateHasChanged();
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         _previewCancellationTokenSource.Dispose();
     }
 }

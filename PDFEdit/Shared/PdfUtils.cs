@@ -1,12 +1,11 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
-using PDFEdit.Extensions;
 
 namespace PDFEdit.Shared;
 
 public static class PdfUtils
 {
-    public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name, bool landscapeAspectRatio = false)
+    public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name)
     {
         using var outputStream = new MemoryStream();
 
@@ -35,9 +34,6 @@ public static class PdfUtils
 
         PdfImportedPage pdfImportedPage;
 
-        var pageSizes = new List<Rectangle>();
-        var pageTransforms = new List<PdfTransform>();
-
         // Iterate and process the reader list.
         for (int i = 0; i < readers.Count; i++)
         {
@@ -47,20 +43,39 @@ public static class PdfUtils
             //Create page and add content.
             for (int j = 0; j < pdfReader.NumberOfPages; j++)
             {
-                var pageTransform = pageInfo.PageTransforms[j];
-                document.SetPageSize(pageInfo.PageSizes[j]);
-                pageSizes.Add(pageInfo.PageSizes[j]);
-                pageTransforms.Add(pageTransform);
+                var pageSize = pdfReader.GetPageSizeWithRotation(j + 1);
+                document.SetPageSize(pageSize);
                 document.NewPage();
 
                 // Get the Page
                 pdfImportedPage = writer.GetImportedPage(
-                        pdfReader, j + 1);
-                
-                // Add the Page with the previously calculated Transform
-                pageContentByte.AddTemplate(pdfImportedPage, pageTransform);
+                    pdfReader, j + 1);
+
+                // Depending on the rotation, different transforms have to be applied
+                var rotation = pdfReader.GetPageRotation(j + 1);
+                switch (rotation)
+                {
+                    case 0:
+                        pageContentByte.AddTemplate(pdfImportedPage, 1f, 0, 0, 1f, 0, 0);
+                        break;
+
+                    case 90:
+                        pageContentByte.AddTemplate(pdfImportedPage, 0, -1f, 1f, 0, 0, pageSize.Height);
+                        break;
+
+                    case 180:
+                        pageContentByte.AddTemplate(pdfImportedPage, -1f, 0, 0, -1f, pageSize.Width, pageSize.Height);
+                        break;
+
+                    case 270:
+                        pageContentByte.AddTemplate(pdfImportedPage, 0, 1f, -1f, 0, pageSize.Width, 0);
+                        break;
+
+                    default:
+                        throw new InvalidOperationException($"Unexpected page rotation: {rotation}°.");
+                }
             }
-       }
+        }
 
         // Close document
         document.Close();
@@ -70,21 +85,18 @@ public static class PdfUtils
         {
             Name = name,
             Content = outputStream.ToArray(),
-            PageSizes = pageSizes.ToArray(),
-            PageTransforms = pageTransforms.ToArray(),
             PageCount = totalPages
         };
     }
 
     public static PdfFile ExtractPages(PdfFile inputFile, int startIndex, int endIndex, string name = "")
     {
-        if (startIndex - endIndex == 0) {
+        if (startIndex - endIndex == 0)
+        {
             return new PdfFile
             {
                 Name = name,
                 Content = new byte[0],
-                PageSizes = new Rectangle[0],
-                PageTransforms = new PdfTransform[0],
                 PageCount = 0
             };
         }
@@ -96,15 +108,10 @@ public static class PdfUtils
         var copy = new PdfCopy(document, outputStream);
         document.Open();
 
-        var pageSizes = new List<Rectangle>();
-        var pageTransforms = new List<PdfTransform>();
-
         for (int i = startIndex; i < endIndex; i++)
         {
             var page = copy.GetImportedPage(reader, i + 1);
-            var size = reader.GetPageSize(i + 1);
-            pageSizes.Add(size);
-            pageTransforms.Add(inputFile.PageTransforms[i]);
+            var size = reader.GetPageSizeWithRotation(i + 1);
             copy.AddPage(page);
         }
 
@@ -114,44 +121,44 @@ public static class PdfUtils
         {
             Name = name,
             Content = outputStream.ToArray(),
-            PageSizes = pageSizes.ToArray(),
-            PageTransforms = pageTransforms.ToArray(),
             PageCount = endIndex - startIndex
         };
     }
 
     public static PdfFile TransformPage(PdfFile inputPdf, int pageIndex, PdfTransform transform)
     {
-        using var outputStream = new MemoryStream();
+        using var stream = new MemoryStream();
+        using var reader = new PdfReader(inputPdf.Content);
 
-        var reader = new PdfReader(inputPdf.Content);
-        var pageSizes = new List<Rectangle>();
-        var pageTransforms = inputPdf.PageTransforms;
+        var page = reader.GetPageN(pageIndex + 1);
+        page.Put(PdfName.Rotate, new PdfNumber(transform.Angle.ToFloat()));
 
-        for (int p = 1; p <= reader.NumberOfPages; p++) {
-            var page = reader.GetPageN(p);
-            var rotate = page.GetAsNumber(PdfName.Rotate);
-            if (rotate == null) {
-                page.Put(PdfName.Rotate, new PdfNumber(90));
-                pageTransforms[p - 1].Angle = 90;
-            }
-            else {
-                page.Put(PdfName.Rotate, new PdfNumber((rotate.IntValue + 90) % 360));
-                pageTransforms[p - 1].Angle = (rotate.IntValue + 90) % 360;
-            }
-            pageSizes.Add(reader.GetPageSizeWithRotation(p));
-        }
-        PdfStamper stamper = new PdfStamper(reader, outputStream);
+        var stamper = new PdfStamper(reader, stream);
         stamper.Close();
-        reader.Close();
 
         return new PdfFile
         {
             Name = inputPdf.Name,
             PageCount = inputPdf.PageCount,
-            PageSizes = pageSizes.ToArray(),
-            PageTransforms = pageTransforms,
-            Content = outputStream.ToArray()
+            Content = stream.ToArray(),
+        };
+    }
+
+    public static PdfTransform GetPageTransform(PdfFile inputPdf, int pageIndex)
+    {
+        using var reader = new PdfReader(inputPdf.Content);
+
+        var page = reader.GetPageN(pageIndex + 1);
+        var rotation = 0f;
+        if (page.GetAsNumber(PdfName.Rotate) is { } r)
+        {
+            rotation = r.FloatValue;
+        }
+        var angle = (PdfRotation)(rotation / 90);
+
+        return new PdfTransform
+        {
+            Angle = angle
         };
     }
 }

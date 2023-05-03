@@ -9,7 +9,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddTransient(serviceProvider =>
-    (IJSInProcessRuntime) serviceProvider.GetRequiredService<IJSRuntime>());
+    (IJSInProcessRuntime)serviceProvider.GetRequiredService<IJSRuntime>());
 builder.Services.AddTransient<JsInteropService>();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
