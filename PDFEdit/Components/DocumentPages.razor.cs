@@ -9,8 +9,8 @@ public partial class DocumentPages {
 
     [Parameter] public PdfFile Document { get; set; }
     [Parameter] public int Index { get; set; }
-    [Parameter] public Action<int, int> OnPageAdded { get; set; }
-    [Parameter] public Action<int> OnDocumentAdded { get; set; }
+    [Parameter] public EventCallback<(int, int)> OnPageAdded { get; set; }
+    [Parameter] public EventCallback<int> OnDocumentAdded { get; set; }
 
     private List<string> _pageRenders = new();
 

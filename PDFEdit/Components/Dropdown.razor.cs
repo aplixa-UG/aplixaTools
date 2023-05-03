@@ -6,7 +6,7 @@ public partial class Dropdown
 {
     [Parameter] public IEnumerable<string> Options { get; set; }
     [Parameter] public int Default { get; set; } = 0;
-    [Parameter] public Action<int> OnValueChanged { get; set; }
+    [Parameter] public EventCallback<int> OnValueChanged { get; set; }
 
     public int SelectedIndex = -1;
 
@@ -16,10 +16,10 @@ public partial class Dropdown
         SelectedIndex = Default;
     }
 
-    private void Select(int index)
+    private async Task Select(int index)
     {
         SelectedIndex = index;
         StateHasChanged();
-        OnValueChanged?.Invoke(SelectedIndex);
+        await OnValueChanged.InvokeAsync(SelectedIndex);
     }
 }

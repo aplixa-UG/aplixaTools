@@ -1,6 +1,6 @@
 ﻿.dropdown-menu {
     max-height: clamp(200px, 50vh, 500px);
-    overflow: scroll;
+    overflow: auto;
 }
 
 li {

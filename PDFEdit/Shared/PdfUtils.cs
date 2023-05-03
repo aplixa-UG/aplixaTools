@@ -6,19 +6,12 @@ namespace PDFEdit.Shared;
 
 public static class PdfUtils
 {
-    public static PdfFile MergePdfFiles(List<byte[]> inputPdfList, string name, Rectangle pageSize = null, bool landscapeAspectRatio = false)
+    public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name, bool landscapeAspectRatio = false)
     {
-        pageSize = pageSize ?? PageSize.A4;
-        
-        if (landscapeAspectRatio)
-        {
-            pageSize = new Rectangle(pageSize.Height, pageSize.Width);
-        }
-
         using var outputStream = new MemoryStream();
 
         // Create document and pdfReader objects.
-        var document = new Document(pageSize);
+        var document = new Document();
         var readers = new List<PdfReader>();
         int totalPages = 0;
 
@@ -26,7 +19,7 @@ public static class PdfUtils
         // Create reader list for the input pdf files.
         foreach (var pdf in inputPdfList)
         {
-            var pdfReader = new PdfReader(pdf);
+            var pdfReader = new PdfReader(pdf.Content);
             readers.Add(pdfReader);
             totalPages = totalPages + pdfReader.NumberOfPages;
         }
@@ -41,56 +34,33 @@ public static class PdfUtils
         PdfContentByte pageContentByte = writer.DirectContent;
 
         PdfImportedPage pdfImportedPage;
-        int currentPdfReaderPage = 1;
+
+        var pageSizes = new List<Rectangle>();
+        var pageTransforms = new List<PdfTransform>();
 
         // Iterate and process the reader list.
-        foreach (var pdfReader in readers)
+        for (int i = 0; i < readers.Count; i++)
         {
+            var pdfReader = readers[i];
+            var pageInfo = inputPdfList[i];
+
             //Create page and add content.
-            while (currentPdfReaderPage <= pdfReader.NumberOfPages)
+            for (int j = 0; j < pdfReader.NumberOfPages; j++)
             {
+                var pageTransform = pageInfo.PageTransforms[j];
+                document.SetPageSize(pageInfo.PageSizes[j]);
+                pageSizes.Add(pageInfo.PageSizes[j]);
+                pageTransforms.Add(pageTransform);
                 document.NewPage();
-                var rotation = pdfReader.GetPageRotation(currentPdfReaderPage);
-                var size = pdfReader.GetPageSizeWithRotation(currentPdfReaderPage);
-                var width = size.Width;
-                var height = size.Height;
-
-                // Scale the added Page to fit the Document
-                var scaleX = document.PageSize.Width / width;
-                var scaleY = document.PageSize.Height / height;
-
-                // Choose by which factor to scale based on which makes the new Page appear larger
-                scaleX = scaleY < scaleX ? scaleY : scaleX;
-                scaleY = scaleY < scaleX ? scaleY : scaleX;
-
-                // Center the new Page
-                var transformX = (document.PageSize.Width - width * scaleX) / 2;
-                var transformY = (document.PageSize.Height - height * scaleY) / 2;
-
-                var transform = new PdfTransform
-                {
-                    ScaleX = scaleX,
-                    ScaleY = scaleY,
-                    TransformX = transformX,
-                    TransformY = transformY
-                };
 
                 // Get the Page
                 pdfImportedPage = writer.GetImportedPage(
-                        pdfReader, currentPdfReaderPage);
-
+                        pdfReader, j + 1);
+                
                 // Add the Page with the previously calculated Transform
-                pageContentByte.AddTemplate(
-                    pdfImportedPage,
-                    transform
-                );
-
-                // Proceed through the pages
-                currentPdfReaderPage++;
+                pageContentByte.AddTemplate(pdfImportedPage, pageTransform);
             }
-            // Reset Page Counter
-            currentPdfReaderPage = 1;
-        }
+       }
 
         // Close document
         document.Close();
@@ -100,21 +70,25 @@ public static class PdfUtils
         {
             Name = name,
             Content = outputStream.ToArray(),
+            PageSizes = pageSizes.ToArray(),
+            PageTransforms = pageTransforms.ToArray(),
             PageCount = totalPages
         };
     }
 
-    public static PdfFile ExtractPages(byte[] inputFile, int startIndex, int endIndex, string name = "")
+    public static PdfFile ExtractPages(PdfFile inputFile, int startIndex, int endIndex, string name = "")
     {
         if (startIndex - endIndex == 0) {
-            return new PdfFile()
+            return new PdfFile
             {
                 Name = name,
                 Content = new byte[0],
+                PageSizes = new Rectangle[0],
+                PageTransforms = new PdfTransform[0],
                 PageCount = 0
             };
         }
-        using var reader = new PdfReader(inputFile);
+        using var reader = new PdfReader(inputFile.Content);
         using var outputStream = new MemoryStream();
 
         var outputByteArrays = new List<byte[]>();
@@ -122,20 +96,62 @@ public static class PdfUtils
         var copy = new PdfCopy(document, outputStream);
         document.Open();
 
+        var pageSizes = new List<Rectangle>();
+        var pageTransforms = new List<PdfTransform>();
+
         for (int i = startIndex; i < endIndex; i++)
         {
-            copy.AddPage(copy.GetImportedPage(reader, i + 1));
+            var page = copy.GetImportedPage(reader, i + 1);
+            var size = reader.GetPageSize(i + 1);
+            pageSizes.Add(size);
+            pageTransforms.Add(inputFile.PageTransforms[i]);
+            copy.AddPage(page);
         }
-
-        Console.WriteLine(reader.NumberOfPages);
 
         document.Close();
 
-        return new PdfFile()
+        return new PdfFile
         {
             Name = name,
             Content = outputStream.ToArray(),
+            PageSizes = pageSizes.ToArray(),
+            PageTransforms = pageTransforms.ToArray(),
             PageCount = endIndex - startIndex
+        };
+    }
+
+    public static PdfFile TransformPage(PdfFile inputPdf, int pageIndex, PdfTransform transform)
+    {
+        using var outputStream = new MemoryStream();
+
+        var reader = new PdfReader(inputPdf.Content);
+        var pageSizes = new List<Rectangle>();
+        var pageTransforms = inputPdf.PageTransforms;
+
+        for (int p = 1; p <= reader.NumberOfPages; p++) {
+            var page = reader.GetPageN(p);
+            var rotate = page.GetAsNumber(PdfName.Rotate);
+            if (rotate == null) {
+                page.Put(PdfName.Rotate, new PdfNumber(90));
+                pageTransforms[p - 1].Angle = 90;
+            }
+            else {
+                page.Put(PdfName.Rotate, new PdfNumber((rotate.IntValue + 90) % 360));
+                pageTransforms[p - 1].Angle = (rotate.IntValue + 90) % 360;
+            }
+            pageSizes.Add(reader.GetPageSizeWithRotation(p));
+        }
+        PdfStamper stamper = new PdfStamper(reader, outputStream);
+        stamper.Close();
+        reader.Close();
+
+        return new PdfFile
+        {
+            Name = inputPdf.Name,
+            PageCount = inputPdf.PageCount,
+            PageSizes = pageSizes.ToArray(),
+            PageTransforms = pageTransforms,
+            Content = outputStream.ToArray()
         };
     }
 }

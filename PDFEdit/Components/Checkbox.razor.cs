@@ -6,7 +6,7 @@ public partial class Checkbox
 {
     [Parameter] public string Label { get; set; }
     [Parameter] public bool DefaultValue { get; set; } = false;
-    [Parameter] public Action<bool> ValueChanged { get; set; }
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 
     private bool _value = false;
 
@@ -16,9 +16,9 @@ public partial class Checkbox
         _value = DefaultValue;
     }
 
-    private void SetValue(ChangeEventArgs changeEventArgs)
+    private async Task SetValue(ChangeEventArgs changeEventArgs)
     {
         _value = (bool)changeEventArgs.Value;
-        ValueChanged(_value);
+        await ValueChanged.InvokeAsync(_value);
     }
 }

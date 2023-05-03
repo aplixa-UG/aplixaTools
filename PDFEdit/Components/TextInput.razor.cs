@@ -6,7 +6,7 @@ public partial class TextInput
 {
     [Parameter] public string Placeholder { get; set; }
     [Parameter] public string DefaultValue { get; set; } = "";
-    [Parameter] public Action<string> ValueChanged { get; set; }
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
     private string _value = "";
 
@@ -16,9 +16,9 @@ public partial class TextInput
         _value = DefaultValue;
     }
 
-    private void SetValue(ChangeEventArgs changeEventArgs)
+    private async Task SetValue(ChangeEventArgs changeEventArgs)
     {
         _value = (string)changeEventArgs.Value;
-        ValueChanged(_value);
+        await ValueChanged.InvokeAsync(_value);
     }
 }

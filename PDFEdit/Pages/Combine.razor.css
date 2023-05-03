@@ -16,21 +16,19 @@ section > div {
 }
 
 .file-list {
-    position: absolute;
     display: flex;
     flex-direction: column;
-    top: 3.5rem;
-    bottom: 5rem;
-    overflow: scroll;
-    right: 1rem;
+    overflow-y: auto;
     width: 100%;
     padding: 1rem;
+    gap: 1rem;
+
     box-sizing: border-box;
 }
 
 .file-input {
     position: absolute;
-    bottom: 0rem;
+    top: 1rem;
     right: 1rem;
     cursor: pointer;
 }
@@ -44,13 +42,12 @@ section > div {
     }
 
 .input-pages {
+    position: relative;
     height: 100%;
-    padding: 2rem;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    overflow: scroll;
+    overflow: auto;
     border-right: 1px solid #d1d1d1;
     min-width: 370px;
 }
@@ -65,8 +62,7 @@ section > div {
 }
     .output-pages .preview-image {
         position: relative;
-        width: 100%;
-        cursor: pointer;
+        width: min-content;
         box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.25);
     }
 
@@ -75,8 +71,11 @@ section > div {
         inset: 0;
         background-color: rgba(41, 41, 41, .7);
         opacity: 0;
-        display: grid;
-        place-items: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        align-items: center;
         color: white;
         transition: opacity 500ms ease;
     }
@@ -86,12 +85,13 @@ section > div {
     }
 
         .output-pages .preview-image .overlay ::deep svg {
-            width: 7rem;
-            height: 7rem;
+            width: 3rem;
+            height: 3rem;
+            cursor: pointer;
         }
 
     .output-pages img {
-        width: 100%;
+        max-height: 50vh;
     }
 
     .output-pages .options {
@@ -104,9 +104,10 @@ section > div {
     .output-pages .preview {
         display: flex;
         flex-direction: column;
+        align-items: center;
         height: 100%;
         width: 100%;
-        overflow: scroll;
+        overflow: auto;
         padding: 1rem;
         gap: 1rem;
     }

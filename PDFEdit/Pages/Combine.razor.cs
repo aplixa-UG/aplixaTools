@@ -15,11 +15,13 @@ public partial class Combine : IDisposable
     [Inject] public JsInteropService JsInterop { get; set; }
 
     public Modal _confirmClearModal { get; set; }
+    public PageSettingsModal _pageSettingsModal { get; set; }
 
     private List<PdfFile> _fileSources = new();
-    private List<byte[]> _inputDocuments = new();
+    private List<PdfFile> _inputDocuments = new();
     private List<string> _outputDocumentPreviewPages = new();
 
+    private int _selectedPage;
     private PdfFile _outputDocument;
     private Rectangle _pageSize = PageSize.A4;
     private bool _landscapeOrientation = false;
@@ -39,10 +41,26 @@ public partial class Combine : IDisposable
 
             var reader = new PdfReader(bytes);
 
+            var pageSizes = new List<Rectangle>();
+
+            for (int i = 0; i < reader.NumberOfPages; i++)
+            {
+                pageSizes.Add(reader.GetPageSize(i + 1));
+            }
+
+            var pageTransforms = new PdfTransform[reader.NumberOfPages];
+
+            for (int i = 0; i < pageTransforms.Length; i++)
+            {
+                pageTransforms[i] = new PdfTransform();
+            }
+
             _fileSources.Add(new PdfFile
             {
                 Name = file.Name,
                 PageCount = reader.NumberOfPages,
+                PageSizes = pageSizes.ToArray(),
+                PageTransforms = pageTransforms,
                 Content = bytes
             });
         }
@@ -67,18 +85,21 @@ public partial class Combine : IDisposable
         await UpdateMerge();
     }
 
-    private async Task DocumentPagesOnPageAdded(int documentIndex, int pageIndex)
+    private async Task DocumentPagesOnPageAdded((int, int) indices)
     {
-        var doc = _fileSources[documentIndex];
-        var page = PdfUtils.ExtractPages(doc.Content, pageIndex, pageIndex + 1);
-        _inputDocuments.Add(page.Content);
+        var doc = _fileSources[indices.Item1];
+        var page = PdfUtils.ExtractPages(doc, indices.Item2, indices.Item2 + 1);
+        _inputDocuments.Add(page);
         await UpdateMerge();
     }
 
     private async Task DocumentPagesOnDocumentAdded(int documentIndex)
     {
         var doc = _fileSources[documentIndex];
-        _inputDocuments.Add(doc.Content);
+        for (int i = 0; i < doc.PageCount; i++) {
+            var page = PdfUtils.ExtractPages(doc, i, i + 1);
+            _inputDocuments.Add(page);
+        }
         await UpdateMerge();
     }
 
@@ -102,13 +123,27 @@ public partial class Combine : IDisposable
         await UpdateMerge();
     }
 
-    private async Task ConfirmClearOnClick() {
+    private void OutputPagesOnSettings(int pageIndex)
+    {
+        _selectedPage = pageIndex;
+        _pageSettingsModal.Show();
+    }
+
+    private async Task ConfirmClearOnClick()
+    {
         _inputDocuments.Clear();
         await UpdateMerge();
         _confirmClearModal.Hide();
     }
 
-    private void FileNameOnValueChanged(string fileName) {
+    private async Task PageSettingsOnSave() 
+    {
+        _inputDocuments[_selectedPage].PageTransforms[0].Angle = 90;
+        await UpdateMerge();
+    }
+
+    private void FileNameOnValueChanged(string fileName)
+    {
         _outputDocumentFileName = fileName;
 
         if (_outputDocument is {}) {
@@ -127,7 +162,7 @@ public partial class Combine : IDisposable
             return;
         }
 
-        _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, _outputDocumentFileName, _pageSize, _landscapeOrientation);
+        _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, _outputDocumentFileName,  _landscapeOrientation);
         _outputDocumentPreviewPages.Clear();
         for (int i = 0; i < _outputDocument.PageCount; i++)
         {

@@ -10,31 +10,30 @@
     </Footer>
 </Modal>
 
+<PageSettingsModal
+    @ref="_pageSettingsModal"
+    OnSaved="PageSettingsOnSave"
+/>
+
 <section>
-	<div class="file-upload">
-		<h6>Dateien</h6>
+    <div class="input-pages">
+        <h6>Dateien</h6>
 		<div class="file-list">
-			@for (int i = 0; i < _fileSources.Count; i++) {
-				var index = i;
-				<FileEntry FileName="@_fileSources[i].Name" Index="index" OnDelete="FileEntryOnDelete"/>
-			}
+			@for (int i = 0; i < _fileSources.Count; i++)
+            {
+                var index = i;
+                <DocumentPages
+                    Document="@_fileSources[i]"
+                    Index="index"
+                    OnPageAdded="DocumentPagesOnPageAdded" 
+                    OnDocumentAdded="DocumentPagesOnDocumentAdded"
+                />
+            }
 		</div>
 		<label class="file-input" for="file-input">
 			<InputFile id="file-input" OnChange="@OnChange" multiple />
 			<Icon Href="@Icons.AddFile"></Icon>
 		</label>
-	</div>
-    <div class="input-pages">
-		@for (int i = 0; i < _fileSources.Count; i++)
-		{
-			var index = i;
-			<DocumentPages
-				Document="@_fileSources[i]"
-				Index="index"
-				OnPageAdded="async (a, b) => await DocumentPagesOnPageAdded(a, b)" 
-				OnDocumentAdded="async (a) => await DocumentPagesOnDocumentAdded(a)"
-			/>
-		}
 	</div>
     <div class="output-pages">
 		<div class="options">
@@ -45,9 +44,10 @@
 		<div class="preview">
 			@for (int i = 0; i < _outputDocumentPreviewPages.Count; i++) {
 				var index = i;
-				<div class="preview-image" @onclick="async _ => await OutputPagesOnPageRemoved(index)">
+				<div class="preview-image">
 					<div class="overlay">
-						<Icon Href="@Icons.Minus"/>
+						<div @onclick="async _ => await OutputPagesOnPageRemoved(index)"><Icon Href="@Icons.TrashCan" /></div>
+						<div @onclick="_ => OutputPagesOnSettings(index)"><Icon Href="@Icons.Cogwheel" /></div>
 					</div>
 					<img src="@_outputDocumentPreviewPages[i]" />
 				</div>

@@ -9,4 +9,5 @@ public class Icons
     public const string Plus = "#plus";
     public const string Minus = "#minus";
     public const string Download = "#download";
+    public const string Cogwheel = "#cogwheel";
 }

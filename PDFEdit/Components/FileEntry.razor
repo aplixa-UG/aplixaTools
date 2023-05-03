@@ -1,6 +1,6 @@
 ﻿<div class="container">
 	<Icon Href="@Icons.PdfFile" /> @FileName
-	<a class="delete" @onclick="() => OnDelete(Index)">
+	<a class="delete" @onclick="async () => await OnDelete.InvokeAsync(Index)">
 		<Icon Href="@Icons.TrashCan" />
 	</a>
 </div>
