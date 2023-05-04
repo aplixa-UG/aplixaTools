@@ -18,7 +18,6 @@ variables:
   solution: "./Aplixa Tools.sln"
   pathPDFEdit: "./PDFEdit/PDFEdit.csproj"
   outputDirPDFEdit: "./PDFEdit/bin/Release/net6.0/publish"
-  isMaster: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
 
 steps:
 - task: UseDotNet@2
@@ -46,11 +45,3 @@ steps:
   inputs:
         artifactName: 'PDFEdit'
         pathtoPublish: '$(system.defaultworkingdirectory)/$(outputDirPDFEdit)'
-
-- task: AzureStaticWebApp@0
-  condition: and(succeeded(), eq(variables.isMaster, true))
-  inputs:
-    app_location: '$(outputDirPDFEdit)'
-    skip_app_build: true
-    skip_api_build: true
-    azure_static_web_apps_api_token: '6cb47a1f91fd1837121deff644a03a74116b5c5e96090f012f19b771b8b0d27d3-6bb538c7-6b60-4caa-b462-a6e3ea5de748003228589'
