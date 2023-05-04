@@ -9,6 +9,29 @@ public class JsInteropService : DefaultJsInteropService
     {
     }
 
+    public void Startup()
+    {
+        JsRuntime.InvokeVoid(
+            Prefix + "startup.run"
+        );
+    }
+
+    public void RegisterTooltips(string parentSelector)
+    {
+        JsRuntime.InvokeVoid(
+            Prefix + "tooltip.register",
+            parentSelector
+        );
+    }
+
+    public void HideAllTooltips(string parentSelector)
+    {
+        JsRuntime.InvokeVoid(
+            Prefix + "tooltip.hideAll",
+            parentSelector
+        );
+    }
+
     public async Task<string> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -36,22 +59,6 @@ public class JsInteropService : DefaultJsInteropService
             cancellationToken,
             fileName,
             bytes
-        );
-    }
-
-    public void ShowModal(string id)
-    {
-        JsRuntime.InvokeVoid(
-            Prefix + "modal.show",
-            id
-        );
-    }
-
-    public void HideModal(string id)
-    {
-        JsRuntime.InvokeVoid(
-            Prefix + "modal.hide",
-            id
         );
     }
 }

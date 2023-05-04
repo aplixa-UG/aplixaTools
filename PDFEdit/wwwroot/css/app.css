@@ -49,6 +49,10 @@ section {
     box-sizing: border-box;
 }
 
+a, button {
+    cursor: pointer;
+}
+
 h1:focus {
     outline: none;
 }

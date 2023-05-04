@@ -150,11 +150,18 @@ public static class PdfUtils
 
         var page = reader.GetPageN(pageIndex + 1);
         var rotation = 0f;
+
         if (page.GetAsNumber(PdfName.Rotate) is { } r)
         {
             rotation = r.FloatValue;
         }
-        var angle = (PdfRotation)(rotation / 90);
+
+        var rotationIndex = rotation / 90;
+
+        var angle = rotation % 90 == 0 && rotationIndex < 4
+            ? (PdfRotation) rotationIndex
+            : PdfRotation.deg0
+            ;
 
         return new PdfTransform
         {

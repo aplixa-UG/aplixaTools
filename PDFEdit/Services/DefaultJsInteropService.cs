@@ -12,11 +12,19 @@ public class DefaultJsInteropService
         JsRuntime = jsRuntime;
     }
 
-    public string GetContent(string id, bool remove)
+    public void ShowModal(string id)
     {
-        return JsRuntime.Invoke<string>(
-            Prefix + "content.getContent",
-            id,
-            remove);
+        JsRuntime.InvokeVoid(
+            Prefix + "modal.show",
+            id
+        );
+    }
+
+    public void HideModal(string id)
+    {
+        JsRuntime.InvokeVoid(
+            Prefix + "modal.hide",
+            id
+        );
     }
 }

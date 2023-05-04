@@ -10,4 +10,5 @@ public class Icons
     public const string Minus = "#minus";
     public const string Download = "#download";
     public const string Cogwheel = "#cogwheel";
+    public const string CloudUpload = "#cloud-upload";
 }

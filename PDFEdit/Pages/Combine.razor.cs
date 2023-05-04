@@ -28,7 +28,18 @@ public partial class Combine : IDisposable
 
     private CancellationTokenSource _previewCancellationTokenSource = new();
 
-    private async Task OnChange(InputFileChangeEventArgs e)
+    private bool _dragging = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JsInterop.Startup();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task FileInputOnChange(InputFileChangeEventArgs e)
     {
         foreach (var file in e.GetMultipleFiles(e.FileCount))
         {
@@ -61,6 +72,7 @@ public partial class Combine : IDisposable
                 Content = bytes
             });
         }
+        _dragging = false;
         StateHasChanged();
     }
 
@@ -90,6 +102,12 @@ public partial class Combine : IDisposable
         await UpdateMerge();
     }
 
+    private async Task DocumentPagesOnDocumentRemoved(int index)
+    {
+        _fileSources.RemoveAt(index);
+        await UpdateMerge();
+    }
+
     private async Task DocumentPagesOnDocumentAdded(int documentIndex)
     {
         var doc = _fileSources[documentIndex];
@@ -108,6 +126,11 @@ public partial class Combine : IDisposable
             return;
         }
         await JsInterop.DownloadByteArrayAsync(_outputDocument.Name, _outputDocument.Content, CancellationToken.None);
+    }
+
+    private void DragFileInputOnDragEnter()
+    {
+
     }
 
     private void ClearButtonOnClick()

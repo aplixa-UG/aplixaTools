@@ -12,6 +12,7 @@ public partial class DocumentPages
     [Parameter] public int Index { get; set; }
     [Parameter] public EventCallback<(int, int)> OnPageAdded { get; set; }
     [Parameter] public EventCallback<int> OnDocumentAdded { get; set; }
+    [Parameter] public EventCallback<int> OnDocumentRemoved { get; set; }
 
     private List<string> _pageRenders = new();
 
@@ -22,5 +23,20 @@ public partial class DocumentPages
             _pageRenders.Add(await JsInterop.PDFtoJPEGAsync(Document.Content, i, CancellationToken.None));
             StateHasChanged();
         }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JsInterop.RegisterTooltips($"div#document-pages-{GetHashCode()}");
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task Remove()
+    {
+        JsInterop.HideAllTooltips($"div#document-pages-{GetHashCode()}");
+        await OnDocumentRemoved.InvokeAsync(Index);
     }
 }
