@@ -72,7 +72,7 @@ public static class PdfUtils
                         break;
 
                     default:
-                        throw new InvalidOperationException($"Unexpected page rotation: {rotation}°.");
+                        throw new InvalidOperationException($"Unexpected page rotation: {rotation}\u00b0.");
                 }
             }
         }

@@ -16,10 +16,10 @@ public partial class PageSettingsModal
 
     private string[] _rotationOptions = new[]
     {
-        "0°",
-        "90°",
-        "180°",
-        "270°"
+        "0\u00b0",
+        "90\u00b0",
+        "180\u00b0",
+        "270\u00b0"
     };
 
     public void Show(PdfRotation rotation)
