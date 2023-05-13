@@ -15,9 +15,9 @@ name: 1.0$(Rev:.r)
 variables:
   buildConfiguration: 'Release'
   version: $(Build.BuildNumber)
-  solution: "./Aplixa Tools.sln"
-  pathPDFEdit: "./PDFEdit/PDFEdit.csproj"
-  outputDirPDFEdit: "./PDFEdit/bin/Release/net6.0/publish"
+  solution: "./AplixaTools.sln"
+  pathPDFEdit: "./AplixaTools.PDFEdit/AplixaTools.PDFEdit.csproj"
+  outputDirPDFEdit: "./AplixaTools.PDFEdit/bin/Release/net6.0/publish"
 
 steps:
 - task: UseDotNet@2
