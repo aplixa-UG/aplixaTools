@@ -21,10 +21,10 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'use 6.x SDK'
+  displayName: 'use 7.x SDK'
   inputs:
     packageType: 'sdk'
-    version: '6.x'
+    version: '7.x'
     includePreviewVersions: false
 
 - script: dotnet --info
