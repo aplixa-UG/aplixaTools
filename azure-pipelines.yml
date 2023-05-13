@@ -17,7 +17,7 @@ variables:
   version: $(Build.BuildNumber)
   solution: "./AplixaTools.sln"
   pathPDFEdit: "./AplixaTools.PDFEdit/AplixaTools.PDFEdit.csproj"
-  outputDirPDFEdit: "./AplixaTools.PDFEdit/bin/Release/net6.0/publish"
+  outputDirPDFEdit: "./AplixaTools.PDFEdit/bin/Release/net7.0/publish"
 
 steps:
 - task: UseDotNet@2
