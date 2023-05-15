@@ -1,5 +1,7 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
+﻿using iText.Kernel.Pdf;
+using iText.Kernel.Utils;
+using iText.Pdfa;
+using System.IO;
 
 namespace AplixaTools.PDFEdit.Shared;
 
@@ -8,164 +10,57 @@ public static class PdfUtils
     public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name)
     {
         using var outputStream = new MemoryStream();
+        using var sRGBstream = new MemoryStream();
 
-        // Create document and pdfReader objects.
-        var document = new Document();
-        var readers = new List<PdfReader>();
-        int totalPages = 0;
+        sRGBstream.Write(ICCProfiles.sRGB_IEC61966_2_1, 0, ICCProfiles.sRGB_IEC61966_2_1.Length);
+        sRGBstream.Position = 0;
 
+        var pdf = new PdfADocument(
+            new PdfWriter(outputStream),
+            PdfAConformanceLevel.PDF_A_3A,
+            new PdfOutputIntent("Custom", "", "https://www.color.org",
+                "sRGB IEC61966-2.1", sRGBstream)
+        );
+        pdf.SetTagged();
+        pdf.GetCatalog().SetLang(new PdfString("de-DE"));
 
-        // Create reader list for the input pdf files.
-        foreach (var pdf in inputPdfList)
+        var merger = new PdfMerger(pdf);
+
+        foreach (var sourcePdf in inputPdfList)
         {
-            var pdfReader = new PdfReader(pdf.Content);
-            readers.Add(pdfReader);
-            totalPages = totalPages + pdfReader.NumberOfPages;
+            using var sourceStream = new MemoryStream();
+            sourceStream.Write(sourcePdf.Content, 0, sourcePdf.Content.Length);
+            sourceStream.Position = 0;
+
+            var sourcePdfDoc = new PdfDocument(new PdfReader(sourceStream));
+            merger.Merge(sourcePdfDoc, 1, sourcePdfDoc.GetNumberOfPages());
+            sourcePdfDoc.Close();
         }
 
-        // Create writer for the outputStream
-        PdfWriter writer = PdfWriter.GetInstance(document, outputStream);
-
-        // Open document.
-        document.Open();
-
-        // Contain the pdf data.
-        PdfContentByte pageContentByte = writer.DirectContent;
-
-        PdfImportedPage pdfImportedPage;
-
-        // Iterate and process the reader list.
-        for (int i = 0; i < readers.Count; i++)
+        // The /Interpolate Key must be false for PDF/A-3a
+        for (int i = 0; i < pdf.GetNumberOfPdfObjects(); i++)
         {
-            var pdfReader = readers[i];
-            var pageInfo = inputPdfList[i];
-
-            //Create page and add content.
-            for (int j = 0; j < pdfReader.NumberOfPages; j++)
+            var pdfObj = pdf.GetPdfObject(i + 1);
+            if (pdfObj is { } && pdfObj.IsStream())
             {
-                var pageSize = pdfReader.GetPageSizeWithRotation(j + 1);
-                document.SetPageSize(pageSize);
-                document.NewPage();
+                var stream = (PdfStream)pdfObj;
 
-                // Get the Page
-                pdfImportedPage = writer.GetImportedPage(
-                    pdfReader, j + 1);
-
-                // Depending on the rotation, different transforms have to be applied
-                var rotation = pdfReader.GetPageRotation(j + 1);
-                switch (rotation)
+                if (stream.ContainsKey(PdfName.Interpolate))
                 {
-                    case 0:
-                        pageContentByte.AddTemplate(pdfImportedPage, 1f, 0, 0, 1f, 0, 0);
-                        break;
-
-                    case 90:
-                        pageContentByte.AddTemplate(pdfImportedPage, 0, -1f, 1f, 0, 0, pageSize.Height);
-                        break;
-
-                    case 180:
-                        pageContentByte.AddTemplate(pdfImportedPage, -1f, 0, 0, -1f, pageSize.Width, pageSize.Height);
-                        break;
-
-                    case 270:
-                        pageContentByte.AddTemplate(pdfImportedPage, 0, 1f, -1f, 0, pageSize.Width, 0);
-                        break;
-
-                    default:
-                        throw new InvalidOperationException($"Unexpected page rotation: {rotation}\u00b0.");
+                    stream.Put(PdfName.Interpolate, new PdfBoolean(false));
                 }
             }
         }
 
-        // Close document
-        document.Close();
-        outputStream.Close();
+        var numberOfPages = pdf.GetNumberOfPages();
+
+        pdf.Close();
 
         return new PdfFile
         {
             Name = name,
             Content = outputStream.ToArray(),
-            PageCount = totalPages
-        };
-    }
-
-    public static PdfFile ExtractPages(PdfFile inputFile, int startIndex, int endIndex, string name = "")
-    {
-        if (startIndex - endIndex == 0)
-        {
-            return new PdfFile
-            {
-                Name = name,
-                Content = new byte[0],
-                PageCount = 0
-            };
-        }
-        using var reader = new PdfReader(inputFile.Content);
-        using var outputStream = new MemoryStream();
-
-        var outputByteArrays = new List<byte[]>();
-        var document = new Document();
-        var copy = new PdfCopy(document, outputStream);
-        document.Open();
-
-        for (int i = startIndex; i < endIndex; i++)
-        {
-            var page = copy.GetImportedPage(reader, i + 1);
-            var size = reader.GetPageSizeWithRotation(i + 1);
-            copy.AddPage(page);
-        }
-
-        document.Close();
-
-        return new PdfFile
-        {
-            Name = name,
-            Content = outputStream.ToArray(),
-            PageCount = endIndex - startIndex
-        };
-    }
-
-    public static PdfFile TransformPage(PdfFile inputPdf, int pageIndex, PdfTransform transform)
-    {
-        using var stream = new MemoryStream();
-        using var reader = new PdfReader(inputPdf.Content);
-
-        var page = reader.GetPageN(pageIndex + 1);
-        page.Put(PdfName.Rotate, new PdfNumber(transform.Angle.ToFloat()));
-
-        var stamper = new PdfStamper(reader, stream);
-        stamper.Close();
-
-        return new PdfFile
-        {
-            Name = inputPdf.Name,
-            PageCount = inputPdf.PageCount,
-            Content = stream.ToArray(),
-        };
-    }
-
-    public static PdfTransform GetPageTransform(PdfFile inputPdf, int pageIndex)
-    {
-        using var reader = new PdfReader(inputPdf.Content);
-
-        var page = reader.GetPageN(pageIndex + 1);
-        var rotation = 0f;
-
-        if (page.GetAsNumber(PdfName.Rotate) is { } r)
-        {
-            rotation = r.FloatValue;
-        }
-
-        var rotationIndex = rotation / 90;
-
-        var angle = rotation % 90 == 0 && rotationIndex < 4
-            ? (PdfRotation) rotationIndex
-            : PdfRotation.deg0
-            ;
-
-        return new PdfTransform
-        {
-            Angle = angle
+            PageCount = numberOfPages
         };
     }
 }

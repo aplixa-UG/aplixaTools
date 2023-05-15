@@ -1,11 +1,10 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using AplixaTools.PDFEdit.Components;
 using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
+using iText.Kernel.Pdf;
 
 namespace AplixaTools.PDFEdit.Pages;
 
@@ -17,14 +16,12 @@ public partial class Combine : IDisposable
     public Modal ConfirmClearModal { get; set; }
     public PageSettingsModal PageSettingsModal { get; set; }
 
-    private List<PdfFile> _fileSources = new();
-    private List<PdfFile> _inputDocuments = new();
-    private List<string> _outputDocumentPreviewPages = new();
+    private readonly List<PdfFile> _fileSources = new();
+    private readonly List<PdfFile> _inputDocuments = new();
+    private readonly List<string> _outputDocumentPreviewPages = new();
 
     private int _selectedPage;
     private PdfFile _outputDocument;
-    private Rectangle _pageSize = PageSize.A4;
-    private bool _landscapeOrientation = false;
     private string _outputDocumentFileName = "merge.pdf";
 
     private CancellationTokenSource _previewCancellationTokenSource = new();
@@ -44,61 +41,29 @@ public partial class Combine : IDisposable
     {
         foreach (var file in e.GetMultipleFiles(e.FileCount))
         {
-            using var stream = file.OpenReadStream(int.MaxValue);
+            using var inputStream = file.OpenReadStream(int.MaxValue);
+            using var inputStreamCopy = new MemoryStream();
 
-            var bytes = new byte[file.Size];
+            await inputStream.CopyToAsync(inputStreamCopy);
+            inputStreamCopy.Position = 0;
 
-            await stream.ReadAsync(bytes);
-
-            var reader = new PdfReader(bytes);
-
-            var pageSizes = new List<Rectangle>();
-
-            for (int i = 0; i < reader.NumberOfPages; i++)
-            {
-                pageSizes.Add(reader.GetPageSize(i + 1));
-            }
-
-            var pageTransforms = new PdfTransform[reader.NumberOfPages];
-
-            for (int i = 0; i < pageTransforms.Length; i++)
-            {
-                pageTransforms[i] = new PdfTransform();
-            }
+            var doc = new PdfDocument(new PdfReader(inputStreamCopy));
 
             _fileSources.Add(new PdfFile
             {
                 Name = file.Name,
-                PageCount = reader.NumberOfPages,
-                Content = bytes
+                PageCount = doc.GetNumberOfPages(),
+                Content = inputStreamCopy.ToArray()
             });
         }
         _dragging = false;
         StateHasChanged();
     }
 
-    private void FileEntryOnDelete(int index)
-    {
-        _fileSources.RemoveAt(index);
-        StateHasChanged();
-    }
-
-    private async Task PageSizeOnChanged(int index)
-    {
-        _pageSize = PageSizes.Sizes.Values.ElementAt(index);
-        await UpdateMerge();
-    }
-
-    private async Task LandscapeOnChanged(bool value)
-    {
-        _landscapeOrientation = value;
-        await UpdateMerge();
-    }
-
     private async Task DocumentPagesOnPageAdded((int, int) indices)
     {
         var doc = _fileSources[indices.Item1];
-        var page = PdfUtils.ExtractPages(doc, indices.Item2, indices.Item2 + 1);
+        var page = doc.ExtractPages(indices.Item2, indices.Item2 + 1);
         _inputDocuments.Add(page);
         await UpdateMerge();
     }
@@ -114,7 +79,7 @@ public partial class Combine : IDisposable
         var doc = _fileSources[documentIndex];
         for (int i = 0; i < doc.PageCount; i++)
         {
-            var page = PdfUtils.ExtractPages(doc, i, i + 1);
+            var page = doc.ExtractPages(i, i + 1);
             _inputDocuments.Add(page);
         }
         await UpdateMerge();
@@ -127,11 +92,6 @@ public partial class Combine : IDisposable
             return;
         }
         await JsInterop.DownloadByteArrayAsync(_outputDocument.Name, _outputDocument.Content, CancellationToken.None);
-    }
-
-    private void DragFileInputOnDragEnter()
-    {
-
     }
 
     private void ClearButtonOnClick()
@@ -148,7 +108,7 @@ public partial class Combine : IDisposable
     private void OutputPagesOnSettings(int pageIndex)
     {
         _selectedPage = pageIndex;
-        var transform = PdfUtils.GetPageTransform(_inputDocuments[pageIndex], 0);
+        var transform = _inputDocuments[pageIndex].GetPageTransform(0);
         PageSettingsModal.Show(transform.Angle);
     }
 
@@ -161,7 +121,7 @@ public partial class Combine : IDisposable
 
     private async Task PageSettingsOnSave()
     {
-        _inputDocuments[_selectedPage] = PdfUtils.TransformPage(_inputDocuments[_selectedPage], 0, new PdfTransform
+        _inputDocuments[_selectedPage] = _inputDocuments[_selectedPage].TransformPage(0, new PdfTransform
         {
             Angle = PageSettingsModal.Rotation,
         });
@@ -216,6 +176,7 @@ public partial class Combine : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         _previewCancellationTokenSource.Dispose();
     }
 }
