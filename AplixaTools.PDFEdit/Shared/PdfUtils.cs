@@ -40,6 +40,7 @@ public static class PdfUtils
         // The /Interpolate Key must be false for PDF/A-3a
         for (int i = 0; i < pdf.GetNumberOfPdfObjects(); i++)
         {
+            Console.WriteLine(i);
             var pdfObj = pdf.GetPdfObject(i + 1);
             if (pdfObj is { } && pdfObj.IsStream())
             {
@@ -49,8 +50,25 @@ public static class PdfUtils
                 {
                     stream.Put(PdfName.Interpolate, new PdfBoolean(false));
                 }
-            }
-        }
+			}
+            else if (pdfObj is { } && pdfObj.IsDictionary())
+			{
+				var dict = (PdfDictionary)pdfObj;
+
+				if (dict.Get(PdfName.Type) is { } type && type.ToString() == "/ExtGState")
+				{
+					dict.Remove(PdfName.TR);
+
+					var keys = dict.KeySet().ToArray();
+					var values = dict.Values().ToArray();
+
+					for (int j = 0; j < keys.Length; j++)
+					{
+						Console.WriteLine($"{keys[j]} : {values[j]}");
+					}
+				}
+			}
+		}
 
         var numberOfPages = pdf.GetNumberOfPages();
 
