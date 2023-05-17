@@ -110,12 +110,16 @@ section > div {
         max-height: 50vh;
     }
 
-    .output-pages .options {
+    .output-pages .header, .header .options {
         display: flex;
         flex-direction: row;
         gap: 1rem;
         align-items: center;
     }
+
+        .header .options {
+            width: 100%;
+        }
 
     .output-pages .preview {
         display: flex;
@@ -126,6 +130,10 @@ section > div {
         overflow: auto;
         padding: 1rem;
         gap: 1rem;
+    }
+
+    .font-warning {
+        white-space: nowrap;
     }
 
 .drag-and-drop-input {

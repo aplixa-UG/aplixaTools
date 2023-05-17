@@ -57,12 +57,20 @@
 		</label>
 	</div>
     <div class="output-pages">
-		<div class="options">
-			<TextInput
-				DefaultValue="@_outputDocumentFileName"
-				Placeholder="Dateiname"
-				ValueChanged="FileNameOnValueChanged"
-			/>
+		<div class="header">
+			<div class="options">
+				<TextInput
+					DefaultValue="@_outputDocumentFileName"
+					Placeholder="Dateiname"
+					ValueChanged="FileNameOnValueChanged"
+				/>
+			</div>
+
+			<span class="font-warning text-danger">
+				<Icon Href="@Icons.ExclamationMarkCircle" />&nbsp;
+				Manche Schriftarten sind unbekannt.&nbsp;
+				<a class="text-decoration-underline text-danger">Jetzt beheben</a>
+			</span>
 		</div>
 		<div class="preview">
 			@for (int i = 0; i < _outputDocumentPreviewPages.Count; i++) {
