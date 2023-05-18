@@ -7,7 +7,7 @@ namespace AplixaTools.PDFEdit.Shared;
 
 public static class PdfUtils
 {
-    public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name)
+    public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name = "")
     {
         using var outputStream = new MemoryStream();
         using var sRGBstream = new MemoryStream();

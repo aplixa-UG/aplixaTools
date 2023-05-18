@@ -121,7 +121,7 @@ section > div {
             width: 100%;
         }
 
-    .output-pages .preview {
+    .output-pages ::deep .preview {
         display: flex;
         flex-direction: column;
         align-items: center;

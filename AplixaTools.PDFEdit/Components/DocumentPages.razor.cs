@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
-using AplixaTools.Shared.Services;
 
 namespace AplixaTools.PDFEdit.Components;
 

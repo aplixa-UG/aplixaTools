@@ -17,8 +17,8 @@ public partial class Combine : IDisposable
     public PageSettingsModal PageSettingsModal { get; set; }
 
     private readonly List<PdfFile> _fileSources = new();
-    private readonly List<PdfFile> _inputDocuments = new();
-    private readonly List<string> _outputDocumentPreviewPages = new();
+    private readonly List<PreviewPage> _outputDocumentPreviewPages = new();
+    private List<PdfFile> _inputDocuments = new();
 
     private int _selectedPage;
     private PdfFile _outputDocument;
@@ -138,6 +138,17 @@ public partial class Combine : IDisposable
         }
     }
 
+    private async Task OutputPreviewOnItemDrop(PreviewPage page) {
+        var order = _outputDocumentPreviewPages.Select(i => i.Index).ToList();
+
+        _outputDocumentPreviewPages.Clear();
+        StateHasChanged();
+
+        _inputDocuments = order.Select(i => _inputDocuments[i]).ToList();
+
+        await UpdateMerge();
+    }
+
     private async Task UpdateMerge()
     {
         _previewCancellationTokenSource.Cancel();
@@ -151,6 +162,10 @@ public partial class Combine : IDisposable
 
         _outputDocument = PdfUtils.MergePdfFiles(_inputDocuments, _outputDocumentFileName);
         _outputDocumentPreviewPages.Clear();
+        await UpdatePreview();
+    }
+
+    public async Task UpdatePreview() {
         for (int i = 0; i < _outputDocument.PageCount; i++)
         {
             try
@@ -160,7 +175,10 @@ public partial class Combine : IDisposable
                 {
                     break;
                 }
-                _outputDocumentPreviewPages.Add(preview);
+                _outputDocumentPreviewPages.Add(new PreviewPage {
+                    Index = i,
+                    Image = preview
+                });
             }
             catch (TaskCanceledException)
             {
