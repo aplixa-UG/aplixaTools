@@ -138,7 +138,8 @@ public partial class Combine : IDisposable
         }
     }
 
-    private async Task OutputPreviewOnItemDrop(PreviewPage page) {
+    private async Task OutputPreviewOnItemDrop(PreviewPage page)
+    {
         var order = _outputDocumentPreviewPages.Select(i => i.Index).ToList();
 
         _outputDocumentPreviewPages.Clear();
@@ -165,7 +166,8 @@ public partial class Combine : IDisposable
         await UpdatePreview();
     }
 
-    public async Task UpdatePreview() {
+    public async Task UpdatePreview()
+    {
         for (int i = 0; i < _outputDocument.PageCount; i++)
         {
             try

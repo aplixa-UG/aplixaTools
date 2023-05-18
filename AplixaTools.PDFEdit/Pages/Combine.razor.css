@@ -132,10 +132,6 @@ section > div {
         gap: 1rem;
     }
 
-    .font-warning {
-        white-space: nowrap;
-    }
-
 .drag-and-drop-input {
     position: absolute;
     inset: 0;
