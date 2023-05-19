@@ -61,6 +61,8 @@ public class PdfFile
         var page = doc.GetPage(pageIndex + 1);
         page.SetRotation((int)transform.Angle * 90);
 
+        doc.Close();
+
         return new PdfFile
         {
             Name = Name,
