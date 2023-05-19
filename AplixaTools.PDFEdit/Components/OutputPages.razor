@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="header">
+        <div class="options">
+            <TextInput
+                DefaultValue="@_outputDocumentFileName"
+                Placeholder="Dateiname"
+                ValueChanged="FileNameOnValueChanged"
+            />
+        </div>
+    </div>
+    @if (_loading)
+    {
+        <div class="preview">
+            <Spinner />
+        </div>
+    }
+    else
+    {
+        <Dropzone OnReplacedItemDrop="OutputPreviewOnItemDrop" OnItemDrop="OutputPreviewOnItemDrop" Items="_outputDocumentPreviewPages" TItem="PreviewPage" Class="preview">
+            <div class="preview-image">
+                <div class="overlay">
+                    <div @onclick="async _ => await OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
+                    <div @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
+                </div>
+                <img src="@context.Image">
+            </div>
+        </Dropzone>
+    }
+    <div class="d-flex flex-row gap-1">
+        <button class="btn btn-primary w-100" @onclick="ClearButtonOnClick">
+            <Icon Href="@Icons.TrashCan" />
+            Alle Entfernen
+        </button>
+        <button class="btn btn-primary w-100" @onclick="MergeButtonOnClick">
+            <Icon Href="@Icons.Download" />
+            Zusammenführen
+        </button>
+    </div>
+</div>

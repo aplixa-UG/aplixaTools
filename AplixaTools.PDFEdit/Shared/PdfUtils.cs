@@ -49,20 +49,10 @@ public static class PdfUtils
                 {
                     stream.Put(PdfName.Interpolate, new PdfBoolean(false));
                 }
-
-				if (stream.ContainsKey(PdfName.FontFamily))
-				{
-					Console.WriteLine(stream.Get(PdfName.FontFamily)?.ToString());
-				}
 			}
             else if (pdfObj is { } && pdfObj.IsDictionary())
 			{
 				var dict = (PdfDictionary)pdfObj;
-
-                if (dict.ContainsKey(PdfName.FontFamily))
-                {
-                    Console.WriteLine(dict.Get(PdfName.FontFamily)?.ToString());
-                }
 
 				if (dict.Get(PdfName.Type) is { } type && type.ToString() == "/ExtGState")
 				{

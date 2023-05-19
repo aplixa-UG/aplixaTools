@@ -1,0 +1,40 @@
+<div class="container" @ondragover="() => _dragging = true">
+    <label for="drag-file-input"
+            class="drag-and-drop-input"
+            style="@(_dragging ? "display: initial" : "display: none")"
+            @onmouseout='() => { _dragging = false; StateHasChanged(); }'
+            @ondragleave='() => { _dragging = false; StateHasChanged(); }'>
+        <InputFile id="drag-file-input"
+                    OnChange="FileInputOnChange"
+                    accept=".pdf"
+                    multiple />
+    </label>
+    <h6>Dateien</h6>
+    <div class="file-list">
+        @for (int i = 0; i < _fileSources.Count; i++)
+        {
+            var index = i;
+            <DocumentPages
+                Index="@index"
+                Document="@_fileSources[i]"
+                OnPageAdded="DocumentPagesOnPageAdded" 
+                OnDocumentAdded="DocumentPagesOnDocumentAdded"
+                OnDocumentRemoved="DocumentPagesOnDocumentRemoved" />
+        }
+        @if (_fileSources.Count == 0)
+        {
+            <div class="info-overlay">
+                <Icon Href="@Icons.CloudUpload" />
+                <span>Legen sie Dateien hier ab, um sie hochzuladen.</span>
+            </div>
+        }
+    </div>
+    <label	class="file-input"
+            for="file-input"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="Dokumente hinzufügen">
+        <InputFile id="file-input" OnChange="FileInputOnChange" accept=".pdf" multiple />
+        <Icon Href="@Icons.AddFile"></Icon>
+    </label>
+</div>
