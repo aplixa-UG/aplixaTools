@@ -10,6 +10,8 @@
     align-items: center;
     justify-content: flex-start;
 
+    z-index: 9999;
+
     background: var(--bg-nav);
     color: var(--text-nav);
 }
