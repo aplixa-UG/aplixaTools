@@ -1,7 +1,18 @@
 ﻿<div class="top-bar">
 	<NavLink href="/" class="title">PDFEdit</NavLink>
-	<button class="menu-button">Menu 1</button>
-	<button class="menu-button">Menu 2</button>
-	<button class="menu-button">Menu 3</button>
-	<button class="menu-button">Menu 4</button>
+    <div class="icon nav-icon @(_showNavMenu ? "open" : "")" @onclick="ToggleNavMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+<div class="side-bar @(_showNavMenu ? "open" : "")">
+    <NavItem Title="Merger" Href="@Routes.CombineTool" Icon="@Icons.SignMergeRight" OnNavigated="HideNavMenu" />
 </div>
