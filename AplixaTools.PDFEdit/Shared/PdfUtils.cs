@@ -42,8 +42,6 @@ public static class PdfUtils
             sourcePdfDoc.Close();
         }
 
-        merger.Close();
-
         // The /Interpolate Key must be false for PDF/A-3a and Dictionaries of type ExtGState mustn't have the key TR
         for (int i = 0; i < pdf.GetNumberOfPdfObjects(); i++)
         {
