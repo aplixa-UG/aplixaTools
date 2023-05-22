@@ -1,4 +1,4 @@
-﻿namespace AplixaTools.PDFEdit.Shared;
+﻿namespace AplixaTools.PDFEdit.Models;
 
 public enum PdfRotation
 {
@@ -18,7 +18,7 @@ public static class PdfRotationExtensions
             PdfRotation.deg90 => 90,
             PdfRotation.deg180 => 180,
             PdfRotation.deg270 => 270,
-            _ => throw new ArgumentException()
+            _ => throw new ArgumentException("Impossible PdfRotation was passed in")
         };
     }
 }

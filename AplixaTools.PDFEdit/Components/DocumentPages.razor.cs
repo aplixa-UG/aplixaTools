@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using AplixaTools.PDFEdit.Services;
-using AplixaTools.PDFEdit.Shared;
+using AplixaTools.PDFEdit.Models;
 
 namespace AplixaTools.PDFEdit.Components;
 
@@ -14,7 +14,7 @@ public partial class DocumentPages
     [Parameter] public EventCallback<int> OnDocumentAdded { get; set; }
     [Parameter] public EventCallback<int> OnDocumentRemoved { get; set; }
 
-    private List<string> _pageRenders = new();
+    private readonly List<string> _pageRenders = new();
 
     protected override async Task OnInitializedAsync()
     {

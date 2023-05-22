@@ -5,6 +5,7 @@ using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
 using iText.Kernel.Pdf;
+using AplixaTools.PDFEdit.Models;
 
 namespace AplixaTools.PDFEdit.Pages;
 
@@ -17,8 +18,6 @@ public partial class Combine : IDisposable
     public PageSettingsModal PageSettingsModal { get; set; }
     public OutputPages OutputPages { get; set; }
     public InputPages InputPages { get; set; }
-
-    private PdfFile _outputDocument;
 
     protected override void OnAfterRender(bool firstRender)
     {

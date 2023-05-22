@@ -12,4 +12,5 @@ public class Icons
     public const string Cogwheel = "#cogwheel";
     public const string CloudUpload = "#cloud-upload";
     public const string ExclamationMarkCircle = "#exclamation-mark-circle";
+    public const string SignMergeRight = "#sign-merge-right";
 }

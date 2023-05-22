@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
+using AplixaTools.PDFEdit.Models;
 
 namespace AplixaTools.PDFEdit.Components;
 
@@ -15,7 +15,7 @@ public partial class PageSettingsModal
 
     private int _rotation = 0;
 
-    private string[] _rotationOptions = new[]
+    private readonly string[] _rotationOptions = new[]
     {
         "0\u00b0",
         "90\u00b0",

@@ -1,4 +1,4 @@
-using AplixaTools.PDFEdit.Shared;
+using AplixaTools.PDFEdit.Models;
 using iText.Kernel.Pdf;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;

@@ -2,7 +2,7 @@
 using iText.Layout.Properties;
 using System.Collections.Generic;
 
-namespace AplixaTools.PDFEdit.Shared;
+namespace AplixaTools.PDFEdit.Models;
 
 public class PdfFile
 {
@@ -94,6 +94,6 @@ public class PdfFile
         return new PdfTransform
         {
             Angle = angle
-		};
+        };
     }
 }

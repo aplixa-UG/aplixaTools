@@ -1,3 +1,4 @@
+using AplixaTools.PDFEdit.Models;
 using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
@@ -18,7 +19,7 @@ public partial class OutputPages : IDisposable {
     private readonly List<PreviewPage> _outputDocumentPreviewPages = new();
     private CancellationTokenSource _previewCancellationTokenSource = new();
     private PdfFile _outputDocument = new();
-    private bool _loading { get; set; } = false;    
+    private bool _loading = false;    
 
     private async Task OutputPreviewOnItemDrop(PreviewPage page)
     {

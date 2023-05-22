@@ -1,4 +1,4 @@
-﻿namespace AplixaTools.PDFEdit.Shared;
+﻿namespace AplixaTools.PDFEdit.Models;
 
 public static class ICCProfiles
 {
