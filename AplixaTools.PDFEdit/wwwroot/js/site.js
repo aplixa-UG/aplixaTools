@@ -32,13 +32,22 @@ var org;
 (function (org) {
     var site;
     (function (site) {
-        var startup;
-        (function (startup) {
-            function run() {
-                org.site.tooltip.register("");
-            }
-            startup.run = run;
-        })(startup = site.startup || (site.startup = {}));
+        site.mousePosition = {
+            x: 0,
+            y: 0
+        };
+        site.mouseMoveEventCallback = (x, y) => { };
+        function run() {
+            org.site.tooltip.register("");
+            document.onmousemove = e => {
+                site.mousePosition = {
+                    x: e.clientX,
+                    y: e.clientY
+                };
+                site.mouseMoveEventCallback(e.clientX, e.clientY);
+            };
+        }
+        site.run = run;
     })(site = org.site || (org.site = {}));
 })(org || (org = {}));
 var org;
@@ -49,8 +58,6 @@ var org;
         (function (utils) {
             function downloadByteArray(fileName, bytes) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    console.log(fileName);
-                    console.log(bytes.length);
                     const blob = new Blob([bytes]);
                     const url = URL.createObjectURL(blob);
                     const anchorElement = document.createElement('a');
@@ -62,6 +69,62 @@ var org;
                 });
             }
             utils.downloadByteArray = downloadByteArray;
+            function getMousePosInContainer(query) {
+                var container = document.querySelector(query);
+                var rect = container.getBoundingClientRect();
+                var x = org.site.mousePosition.x + container.scrollLeft - rect.left;
+                var y = org.site.mousePosition.y + container.scrollTop - rect.top;
+                return [x, y];
+            }
+            utils.getMousePosInContainer = getMousePosInContainer;
+            function getElementSize(elem) {
+                var rect = document.querySelector(elem).getBoundingClientRect();
+                return [rect.x, rect.y];
+            }
+            utils.getElementSize = getElementSize;
+            function getElementDimensions(containerQuery, elementQuery) {
+                var container = document.querySelector(containerQuery);
+                var elem = container.querySelector(elementQuery);
+                var containerRect = container.getBoundingClientRect();
+                var elemRect = elem.getBoundingClientRect();
+                var x = elemRect.left - containerRect.left;
+                var y = elemRect.top - containerRect.top;
+                return [x, y, elemRect.width, elemRect.height];
+            }
+            utils.getElementDimensions = getElementDimensions;
+            function getCssProperty(elem, property) {
+                return $(elem).css(property);
+            }
+            utils.getCssProperty = getCssProperty;
+            var elementStuckToCursor = null;
+            function stickElementToCursor(query) {
+                var elem = document.querySelector(query);
+                var rect = elem.getBoundingClientRect();
+                var relativePos = {
+                    x: site.mousePosition.x - rect.left,
+                    y: site.mousePosition.y - rect.top,
+                };
+                elementStuckToCursor = document.body.appendChild(elem.cloneNode(true));
+                elementStuckToCursor.style.position = "fixed";
+                elementStuckToCursor.style.pointerEvents = "none";
+                elementStuckToCursor.style.opacity = ".3";
+                elementStuckToCursor.animate({
+                    left: site.mousePosition.x - relativePos.x + "px",
+                    top: site.mousePosition.y - relativePos.y + "px",
+                }, { duration: 500, fill: "forwards" });
+                site.mouseMoveEventCallback = (x, y) => {
+                    elementStuckToCursor.animate({
+                        left: x - relativePos.x + "px",
+                        top: y - relativePos.y + "px",
+                    }, { duration: 500, fill: "forwards" });
+                };
+            }
+            utils.stickElementToCursor = stickElementToCursor;
+            function unstickElementsFromCursor() {
+                elementStuckToCursor.remove();
+                site.mouseMoveEventCallback = () => { };
+            }
+            utils.unstickElementsFromCursor = unstickElementsFromCursor;
         })(utils = site.utils || (site.utils = {}));
     })(site = org.site || (org.site = {}));
 })(org || (org = {}));

@@ -1,0 +1,21 @@
+﻿@typeparam TItem
+
+<div 
+	id=@($"dragdroparea-{this.GetHashCode()}") 
+	class="container @Class"
+	@onmouseup="ContainerOnMouseUp" >
+
+	@for (var i = 0; i < _items.Count; i++)
+	{
+		var idx = i;
+		var item = _items[idx];
+
+		<div 
+			id=@($"dragdropitem-{idx}") 
+			class="@_itemClasses[idx]" 
+			@onmousedown="e => ItemOnMouseDown(idx)" >
+
+			@ChildContent(item)
+		</div>
+	}
+</div>

@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using AplixaTools.Shared.Services;
+using AplixaTools.PDFEdit.Models;
 
 namespace AplixaTools.PDFEdit.Services;
 
@@ -13,7 +14,7 @@ public class JsInteropService : DefaultJsInteropService
     public void Startup()
     {
         JsRuntime.InvokeVoid(
-            Prefix + "startup.run"
+            Prefix + "run"
         );
     }
 
@@ -62,4 +63,47 @@ public class JsInteropService : DefaultJsInteropService
             bytes
         );
     }
+
+    public Pos2 GetMousePosInContainer(string container)
+    {
+        var mousePos = JsRuntime.Invoke<float[]>(Prefix + "utils.getMousePosInContainer", container);
+        return new Pos2
+        {
+            X = mousePos[0],
+            Y = mousePos[1]
+        };
+    }
+
+	public ElementDimensions GetElementDimensions(string container, string element)
+	{
+		var dim = JsRuntime.Invoke<float[]>(
+            Prefix + "utils.getElementDimensions",
+            container,
+            element
+        );
+
+		return new ElementDimensions
+		{
+			Position = new Pos2
+            {
+                X = dim[0],
+                Y = dim[1],
+			},
+            Size = new Pos2
+			{
+				X = dim[2],
+				Y = dim[3],
+			}
+		};
+	}
+
+    public void StickElementToCursor(string element)
+    {
+        JsRuntime.InvokeVoid(Prefix + "utils.stickElementToCursor", element);
+    }
+
+	public void UnstickElementFromCursor()
+	{
+		JsRuntime.InvokeVoid(Prefix + "utils.unstickElementsFromCursor");
+	}
 }

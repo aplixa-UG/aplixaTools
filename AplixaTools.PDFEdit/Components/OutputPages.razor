@@ -16,7 +16,7 @@
     }
     else
     {
-        <Dropzone OnReplacedItemDrop="OutputPreviewOnItemDrop" OnItemDrop="OutputPreviewOnItemDrop" Items="_outputDocumentPreviewPages" TItem="PreviewPage" Class="preview">
+        <DragDropArea OnItemDrop="@OutputPreviewOnItemDrop" Items="@_outputDocumentPreviewPages" Class="preview" TItem="PreviewPage">
             <div class="preview-image">
                 <div class="overlay">
                     <div @onclick="async _ => await OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
@@ -24,7 +24,7 @@
                 </div>
                 <img src="@context.Image">
             </div>
-        </Dropzone>
+        </DragDropArea>
     }
     <div class="d-flex flex-row gap-1">
         <button class="btn btn-primary w-100" @onclick="ClearButtonOnClick">

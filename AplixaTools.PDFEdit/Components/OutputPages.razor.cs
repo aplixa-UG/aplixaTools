@@ -21,7 +21,7 @@ public partial class OutputPages : IDisposable {
     private PdfFile _outputDocument = new();
     private bool _loading = false;    
 
-    private async Task OutputPreviewOnItemDrop(PreviewPage page)
+    private async Task OutputPreviewOnItemDrop(int[] order)
     {
         if (InputPages is not {}) 
         {
@@ -30,8 +30,6 @@ public partial class OutputPages : IDisposable {
 
         StartLoading();
         
-        var order = _outputDocumentPreviewPages.Select(i => i.Index).ToList();
-
         _outputDocumentPreviewPages.Clear();
         StateHasChanged();
 
