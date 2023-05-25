@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using AplixaTools.PDFEdit;
 using AplixaTools.Shared.Services;
 using AplixaTools.PDFEdit.Services;
-using Plk.Blazor.DragDrop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -15,7 +14,6 @@ builder.Services.AddTransient(serviceProvider =>
 builder.Services.AddTransient<DefaultJsInteropService>(serviceProvider =>
     serviceProvider.GetRequiredService<JsInteropService>());
 builder.Services.AddTransient<JsInteropService>();
-builder.Services.AddBlazorDragDrop();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
