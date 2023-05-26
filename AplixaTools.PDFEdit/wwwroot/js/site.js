@@ -11,21 +11,24 @@ var org;
 (function (org) {
     var site;
     (function (site) {
-        function PDFtoJPEG(bytes, pageIdx) {
-            return __awaiter(this, void 0, void 0, function* () {
-                let canvas = document.createElement("canvas");
-                let pdf = yield pdfjsLib.getDocument({ data: bytes }).promise;
-                let page = yield pdf.getPage(pageIdx + 1);
-                let viewport = page.getViewport({ scale: 1 });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                let ctx = canvas.getContext('2d');
-                let renderContext = { canvasContext: ctx, viewport: viewport };
-                yield page.render(renderContext).promise;
-                return canvas.toDataURL();
-            });
-        }
-        site.PDFtoJPEG = PDFtoJPEG;
+        var pdfUtils;
+        (function (pdfUtils) {
+            function PDFtoJPEG(bytes, pageIdx) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    let canvas = document.createElement("canvas");
+                    let pdf = yield pdfjsLib.getDocument({ data: bytes }).promise;
+                    let page = yield pdf.getPage(pageIdx + 1);
+                    let viewport = page.getViewport({ scale: 1 });
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    let ctx = canvas.getContext('2d');
+                    let renderContext = { canvasContext: ctx, viewport: viewport };
+                    yield page.render(renderContext).promise;
+                    return canvas.toDataURL();
+                });
+            }
+            pdfUtils.PDFtoJPEG = PDFtoJPEG;
+        })(pdfUtils = site.pdfUtils || (site.pdfUtils = {}));
     })(site = org.site || (org.site = {}));
 })(org || (org = {}));
 var org;

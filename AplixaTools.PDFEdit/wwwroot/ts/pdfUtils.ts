@@ -1,8 +1,8 @@
-namespace org.site {
+namespace org.site.pdfUtils {
 
     declare var pdfjsLib: any;
 
-    export async function PDFtoJPEG(bytes: any, pageIdx: any): Promise<string> {
+    export async function PDFtoJPEG(bytes: Uint8Array, pageIdx: number): Promise<string> {
         let canvas = document.createElement("canvas");
 
         let pdf = await pdfjsLib.getDocument({ data: bytes }).promise

@@ -42,7 +42,7 @@ public class JsInteropService : DefaultJsInteropService
         }
 
         return await JsRuntime.InvokeAsync<string>(
-            "PDFtoJPEG",
+            Prefix + "pdfUtils.PDFtoJPEG",
             cancellationToken,
             pdf,
             i
