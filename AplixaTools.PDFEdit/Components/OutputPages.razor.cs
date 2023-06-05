@@ -19,7 +19,9 @@ public partial class OutputPages : IDisposable {
     private readonly List<PreviewPage> _outputDocumentPreviewPages = new();
     private CancellationTokenSource _previewCancellationTokenSource = new();
     private PdfFile _outputDocument = new();
-    private bool _loading = false;    
+    private bool _loading = false;
+    
+    private DragDropArea<PreviewPage> _dragDropArea { get; set; }
 
     private async Task OutputPreviewOnItemDrop(int[] order)
     {
@@ -45,12 +47,16 @@ public partial class OutputPages : IDisposable {
             return;
         }
 
+        StartLoading();
+
         _previewCancellationTokenSource.Cancel();
         _previewCancellationTokenSource = new();
         if (InputPages.InputDocuments.Count == 0)
         {
+            
             _outputDocument = null;
             _outputDocumentPreviewPages.Clear();
+            await UpdatePreview();
             return;
         }
 
@@ -71,14 +77,20 @@ public partial class OutputPages : IDisposable {
 
     public async Task UpdatePreview()
     {
-        for (int i = 0; i < _outputDocument.PageCount; i++)
+        var count = 0;
+        if (_outputDocument is { })
+        {
+            count = _outputDocument.PageCount;
+        }
+        _outputDocumentPreviewPages.Clear();
+        for (int i = 0; i < count; i++)
         {
             try
             {
                 var preview = await JsInterop.PDFtoJPEGAsync(_outputDocument.Content, i, _previewCancellationTokenSource.Token);
                 if (preview is not { })
                 {
-                    break;
+                    continue;
                 }
                 _outputDocumentPreviewPages.Add(new PreviewPage {
                     Index = i,
@@ -87,7 +99,7 @@ public partial class OutputPages : IDisposable {
             }
             catch (TaskCanceledException)
             {
-                break;
+                continue;
             }
             catch
             {
@@ -96,6 +108,7 @@ public partial class OutputPages : IDisposable {
         }
         _loading = false;
         StateHasChanged();
+        _dragDropArea.Update();
     }
 
     private async Task OnPageRemoved(int pageIndex)
@@ -107,6 +120,7 @@ public partial class OutputPages : IDisposable {
 
     private void OnSettings(int pageIndex)
     {
+        
         SelectedPage = pageIndex;
         var transform = InputPages.InputDocuments?[pageIndex].GetPageTransform(0);
         PageSettingsModal.Show(transform.Angle);

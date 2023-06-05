@@ -22,13 +22,7 @@ public partial class DragDropArea<TItem>
 
 	protected override void OnInitialized()
 	{
-		_items = Items.ToList();
-		_itemClasses = new string[Items.Count()];
-
-		for (int i = 0; i < Items.Count(); i++)
-		{
-			_indices.Add(i);
-		}
+		Update();
 
 		base.OnInitialized();
 	}
@@ -48,9 +42,21 @@ public partial class DragDropArea<TItem>
 		base.OnAfterRender(firstRender);
 	}
 
-	private void MoveItem(int from, int to)
+	public void Update()
 	{
-		Console.WriteLine(string.Join(',', _indices));
+        _items = Items.ToList();
+        _itemClasses = new string[Items.Count()];
+
+		_indices.Clear();
+
+        for (int i = 0; i < Items.Count(); i++)
+        {
+            _indices.Add(i);
+        }
+    }
+
+    private void MoveItem(int from, int to)
+	{
 		
 		var item = _items[from];
 		_items.RemoveAt(from);
@@ -58,18 +64,27 @@ public partial class DragDropArea<TItem>
 
 		_indices.RemoveAt(from);
 		_indices.Insert(to, from);
-
-		Console.WriteLine(string.Join(',', _indices));
 	}
 
 	private void ItemOnMouseDown(int i)
 	{
+		if (JsInterop.GetHoveredItemAttribute("data-clickable") == "true")
+		{
+			
+			return;
+		}
+
 		_itemClasses[i] = "grabbed";
 		_selectedItem = i;
 	}
 
 	private async Task ContainerOnMouseUp()
 	{
+		if (_selectedItem == -1)
+		{
+			return;
+		}
+
 		JsInterop.UnstickElementFromCursor();
 		var ownDimensions = JsInterop.GetElementDimensions(
 			"body",
@@ -105,9 +120,6 @@ public partial class DragDropArea<TItem>
 						Y = nextDimensions.Size.Y - dimensions.Size.Y
 					}
 				};
-
-				Console.WriteLine($"x: {gap.Position.X} y: {gap.Position.Y} w: {gap.Size.X} h: {gap.Size.Y}");
-				Console.WriteLine(gap.Contains(pos));
 			}
 		}
 
@@ -127,8 +139,6 @@ public partial class DragDropArea<TItem>
 				$"#dragdroparea-{GetHashCode()}",
 				query
 			);
-
-			Console.WriteLine($"x: {dimensions.Position.X} y: {dimensions.Position.Y} w: {dimensions.Size.X} h: {dimensions.Size.Y}");
 
             _elementDimensions.Add(dimensions);
 		}
