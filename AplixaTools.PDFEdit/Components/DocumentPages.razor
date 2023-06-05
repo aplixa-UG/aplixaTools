@@ -1,30 +1,28 @@
 <div class="container" id="document-pages-@this.GetHashCode()">
-    <span class="title">@Document.Name</span>
-    <div class="pages">
-        @for (int i = 0; i < _pageRenders.Count; i++) {
+	<span class="title">@Document.Name</span>
+	<div class="pages">
+		@for (int i = 0; i < _pageRenders.Count; i++) {
 			var index = i;
-            <div @onclick="async () => await OnPageAdded.InvokeAsync((Index, index))" class="page">
-                <div class="overlay">
-                    <Icon Href="@Icons.Plus" />
-                </div>
-			    <img src="@_pageRenders[i]">
-            </div>
+			<div @onclick="async () => await OnPageAdded.InvokeAsync((Index, index))" class="page">
+				<div class="overlay">
+					<Icon Href="@Icons.Plus" />
+				</div>
+				<img src="@_pageRenders[i]">
+			</div>
 		}
-    </div>
-    <div class="doc-controls">
-        <a @onclick="async _ => await OnDocumentAdded.InvokeAsync(Index)"
-           data-bs-toggle="tooltip"
-           data-bs-placement="top"
-           title="Alle Seiten hinzufügen"
-        >
-            <Icon Href="@Icons.PlusCircle"></Icon>
-        </a>
-        <a @onclick="Remove"
-           data-bs-toggle="tooltip"
-           data-bs-placement="top"
-           title="Dokument löschen"
-        >
-            <Icon Href="@Icons.TrashCan"></Icon>
-        </a>
-    </div>
+	</div>
+	<div class="doc-controls">
+		<a @onclick="async _ => await OnDocumentAdded.InvokeAsync(Index)"
+		   data-bs-toggle="tooltip"
+		   data-bs-placement="top"
+		   title=@("Alle Seiten hinzufügen")>
+			<Icon Href="@Icons.PlusCircle"></Icon>
+		</a>
+		<a @onclick="Remove"
+		   data-bs-toggle="tooltip"
+		   data-bs-placement="top"
+		   title=@("Dokument löschen")>
+			<Icon Href="@Icons.TrashCan"></Icon>
+		</a>
+	</div>
 </div>
