@@ -4,7 +4,7 @@
             style="@(_dragging ? "display: initial" : "display: none")"
             @onmouseout='() => { _dragging = false; StateHasChanged(); }'
             @ondragleave='() => { _dragging = false; StateHasChanged(); }'>
-        <InputFile id="drag-file-input"
+        <InputFile  id="drag-file-input"
                     OnChange="FileInputOnChange"
                     accept=".pdf"
                     multiple />
@@ -14,12 +14,13 @@
         @for (int i = 0; i < _fileSources.Count; i++)
         {
             var index = i;
-            <DocumentPages
-                Index="@index"
-                Document="@_fileSources[i]"
-                OnPageAdded="DocumentPagesOnPageAdded" 
-                OnDocumentAdded="DocumentPagesOnDocumentAdded"
-                OnDocumentRemoved="DocumentPagesOnDocumentRemoved" />
+            var file = _fileSources[index];
+
+            <DocumentPages  Index="@index"
+                            Document="@file"
+                            OnPageAdded="DocumentPagesOnPageAdded" 
+                            OnDocumentAdded="DocumentPagesOnDocumentAdded"
+                            OnDocumentRemoved="DocumentPagesOnDocumentRemoved" />
         }
         @if (_fileSources.Count == 0)
         {

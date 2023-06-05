@@ -40,6 +40,7 @@
     top: var(--top-bar-height);
     bottom: 0;
     left: 100vw;
+    opacity: 0;
     width: var(--width);
     display: flex;
     flex-direction: column;
@@ -52,13 +53,14 @@
     padding: 2rem;
     gap: 1rem;
     box-shadow: 0px 0px 0px 0px white;
-    transition: left 500ms ease, box-shadow 200ms ease 500ms;
+    transition: left 500ms ease, box-shadow 200ms ease 500ms, opacity 0ms ease 700ms;
 }
 
     .side-bar.open {
         left: calc(100vw - var(--width));
         box-shadow: 0px 0px 22px 7px rgba(0, 0, 0, 0.25);
-        transition: left 500ms ease, box-shadow 200ms ease;
+        opacity: 1;
+        transition: left 500ms ease, box-shadow 200ms ease, opacity 0ms ease;
     }
 
         .side-bar.open ::deep .container:hover {
