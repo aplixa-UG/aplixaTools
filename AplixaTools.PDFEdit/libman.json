@@ -3,14 +3,6 @@
   "defaultProvider": "unpkg",
   "libraries": [
     {
-      "library": "pdfjs-dist@3.5.141",
-      "destination": "wwwroot/lib/pdfjs",
-      "files": [
-        "build/pdf.min.js",
-        "build/pdf.worker.min.js"
-      ]
-    },
-    {
       "library": "bootstrap@5.2.3",
       "destination": "wwwroot/lib/bootstrap/",
       "files": [
@@ -270,6 +262,16 @@
       "destination": "wwwroot/lib/types/sizzle/",
       "files": [
         "index.d.ts"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "pdfjs-dist@3.7.107",
+      "destination": "wwwroot/lib/pdfjs-dist/",
+      "files": [
+        "build/pdf.min.js",
+        "build/pdf.worker.entry.js",
+        "build/pdf.worker.min.js"
       ]
     }
   ]
