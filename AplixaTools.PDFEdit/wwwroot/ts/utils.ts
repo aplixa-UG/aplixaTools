@@ -75,4 +75,11 @@
         elementStuckToCursor.remove();
         mouseMoveEventCallback = () => { }
     }
+
+    export function getHoveredItemAttribute(attr: string): string {
+        while (!hoveredItem.is("div")) {
+            hoveredItem = hoveredItem.parent();
+        }
+        return hoveredItem.attr(attr);
+    }
 }

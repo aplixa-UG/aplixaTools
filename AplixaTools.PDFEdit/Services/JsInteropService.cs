@@ -106,4 +106,9 @@ public class JsInteropService : DefaultJsInteropService
 	{
 		JsRuntime.InvokeVoid(Prefix + "utils.unstickElementsFromCursor");
 	}
+
+    public string GetHoveredItemAttribute(string attr)
+    {
+        return JsRuntime.Invoke<string>(Prefix + "utils.getHoveredItemAttribute", attr);
+    }
 }
