@@ -363,7 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # LibMan libraries
-PDFEdit/wwwroot/lib
+AplixaTools.PDFEdit/wwwroot/lib
 
-PDFEdit/wwwroot/js/site.js
-PDFEdit/wwwroot/js/site.js.map
+AplixaTools.PDFEdit/wwwroot/js/site.js
+AplixaTools.PDFEdit/wwwroot/js/site.js.map
