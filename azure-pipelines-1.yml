@@ -1,0 +1,37 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+name: 1.0$(Rev:.r)
+
+variables:
+  buildConfiguration: 'Debug'
+  version: $(Build.BuildNumber)
+  solution: "./AplixaTools.sln"
+  pathPDFEdit: "./AplixaTools.PDFEdit/AplixaTools.PDFEdit.csproj"
+  outputDirPDFEdit: "./AplixaTools.PDFEdit/bin/Debug/net7.0/publish"
+
+steps:
+- task: UseDotNet@2
+  displayName: 'use 7.x SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '7.x'
+    includePreviewVersions: false
+
+- script: dotnet --info
+  displayName: 'dotnet info'
+
+- task: DotNetCoreCLI@2
+  displayName: 'test'
+  inputs:
+    command: 'test'
+    arguments: '--filter "Category!=ExcludeForCI"'
+    projects: $(solution)
