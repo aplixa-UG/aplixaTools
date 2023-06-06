@@ -2,12 +2,20 @@
 using iText.Kernel.Pdf;
 using iText.Kernel.Utils;
 using iText.Pdfa;
-using System.IO;
 
 namespace AplixaTools.PDFEdit.Shared;
 
+/// <summary>
+/// Contains helpers and utilities for PDF Files
+/// </summary>
 public static class PdfUtils
 {
+    /// <summary>
+    /// Merges a List of PDF files into one and encodes it with PDF/A-3a
+    /// </summary>
+    /// <param name="inputPdfList">A List of PdfFiles to merge</param>
+    /// <param name="name">(Optional) The name of the resulting PdfFile</param>
+    /// <returns>A PdfFile containing all the input PdfFiles</returns>
     public static PdfFile MergePdfFiles(List<PdfFile> inputPdfList, string name = "")
     {
         // Set up streams for the PdfWriter to write to and for PDF/A to get its color profile

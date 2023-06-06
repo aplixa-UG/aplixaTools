@@ -1,16 +1,24 @@
 ﻿using iText.Kernel.Pdf;
-using iText.Layout.Properties;
-using System.Collections.Generic;
 
 namespace AplixaTools.PDFEdit.Models;
 
 public class PdfFile
 {
+    /// <summary>
+    /// (Optional) The name of the PDF File (e.g. "merge.pdf")
+    /// </summary>
     public string Name { get; set; }
     public int PageCount { get; set; }
     public byte[] Content { get; set; }
 
-    public PdfFile ExtractPages(int startIndex, int endIndex, string name = "")
+	/// <summary>
+	/// Extracts pages from a PdfFile and puts them into a new PdfFile
+	/// </summary>
+	/// <param name="startIndex">The first element to extract (0-based index, included)</param>
+	/// <param name="endIndex">The last element to extract (0-based index, excluded)</param>
+	/// <param name="name">(Optional) The name of the resulting file</param>
+	/// <returns></returns>
+	public PdfFile ExtractPages(int startIndex, int endIndex, string name = "")
     {
         if (startIndex - endIndex == 0)
         {
@@ -48,6 +56,12 @@ public class PdfFile
         };
     }
 
+    /// <summary>
+    /// Transforms (= Rotates) a page in the PdfDocument
+    /// </summary>
+    /// <param name="pageIndex">0-based index of the page on which the transformation should be applied</param>
+    /// <param name="transform">The transformation to apply</param>
+    /// <returns></returns>
     public PdfFile TransformPage(int pageIndex, PdfTransform transform)
     {
         using var outputStream = new MemoryStream();
@@ -71,6 +85,11 @@ public class PdfFile
         };
     }
 
+    /// <summary>
+    /// Gets the current transformation of a page in the PdfFile
+    /// </summary>
+    /// <param name="pageIndex">0-based index of the page of which the transform should be read</param>
+    /// <returns></returns>
     public PdfTransform GetPageTransform(int pageIndex)
     {
         using var inputStream = new MemoryStream();

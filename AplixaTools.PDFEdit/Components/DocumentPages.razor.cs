@@ -8,10 +8,25 @@ public partial class DocumentPages
 {
     [Inject] public JsInteropService JsInterop { get; set; }
 
+    /// <summary>
+    /// The document of which the pages should be displayed
+    /// </summary>
     [Parameter] public PdfFile Document { get; set; }
+    /// <summary>
+    /// The index of the DocumentPages element (Used as an identifier for the events)
+    /// </summary>
     [Parameter] public int Index { get; set; }
+    /// <summary>
+    /// Fires when the user clicks on a page to add it
+    /// </summary>
     [Parameter] public EventCallback<(int, int)> OnPageAdded { get; set; }
+    /// <summary>
+    /// Fires when the user adds the entire document
+    /// </summary>
     [Parameter] public EventCallback<int> OnDocumentAdded { get; set; }
+    /// <summary>
+    /// Fires when the user removes the document
+    /// </summary>
     [Parameter] public EventCallback<int> OnDocumentRemoved { get; set; }
 
     private readonly List<string> _pageRenders = new();

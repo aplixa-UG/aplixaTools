@@ -8,9 +8,22 @@ public partial class DragDropArea<TItem>
 {
 	[Inject] public JsInteropService JsInterop { get; set; }
 
+	/// <summary>
+	/// Classes to apply to the container
+	/// </summary>
 	[Parameter] public string Class { get; set; }
+	/// <summary>
+	/// A HTML Template for an element (The element itself is accessible in the "context" variable)
+	/// </summary>
 	[Parameter] public RenderFragment<TItem> ChildContent { get; set; }
+	/// <summary>
+	/// The Items to render using the HTML Template
+	/// </summary>
 	[Parameter] public IEnumerable<TItem> Items { get; set; }
+	/// <summary>
+	/// Fires when the user drops a item
+	/// Contains a int[] with the new order of the elements' indices
+	/// </summary>
 	[Parameter] public EventCallback<int[]> OnItemDrop { get; set; }
 
 	private List<TItem> _items = new();
@@ -42,6 +55,9 @@ public partial class DragDropArea<TItem>
 		base.OnAfterRender(firstRender);
 	}
 
+	/// <summary>
+	/// Updates the DragDropArea. Should be used synonimously with StateHasChanged
+	/// </summary>
 	public void Update()
 	{
         _items = Items.ToList();
@@ -85,7 +101,7 @@ public partial class DragDropArea<TItem>
 			return;
 		}
 
-		JsInterop.UnstickElementFromCursor();
+		JsInterop.UnstickElementsFromCursor();
 		var ownDimensions = JsInterop.GetElementDimensions(
 			"body",
 			$"#dragdroparea-{GetHashCode()}"

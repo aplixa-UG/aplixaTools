@@ -11,6 +11,9 @@ public class JsInteropService : DefaultJsInteropService
     {
     }
 
+    /// <summary>
+    /// Initialize the JS Backend
+    /// </summary>
     public void Startup()
     {
         JsRuntime.InvokeVoid(
@@ -18,22 +21,37 @@ public class JsInteropService : DefaultJsInteropService
         );
     }
 
-    public void RegisterTooltips(string parentSelector)
+    /// <summary>
+    /// Register all popper.js/bootstrap tooltips in a container
+    /// </summary>
+    /// <param name="container">The CSS-Style selector of the container</param>
+    public void RegisterTooltips(string container)
     {
         JsRuntime.InvokeVoid(
             Prefix + "tooltip.register",
-            parentSelector
+            container
         );
     }
 
-    public void HideAllTooltips(string parentSelector)
+	/// <summary>
+	/// Hide all popper.js/bootstrap tooltips in a container
+	/// </summary>
+	/// <param name="container">The CSS-Style selector of the container</param>
+	public void HideAllTooltips(string container)
     {
         JsRuntime.InvokeVoid(
             Prefix + "tooltip.hideAll",
-            parentSelector
+            container
         );
     }
 
+    /// <summary>
+    /// Convert a PDF to JPEG using pdf.js
+    /// </summary>
+    /// <param name="pdf">The PDF File as a byte array</param>
+    /// <param name="i">The page index</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The Base64-Encoded JPEG of the page in the PDF</returns>
     public async Task<string> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -49,6 +67,13 @@ public class JsInteropService : DefaultJsInteropService
         );
     }
 
+    /// <summary>
+    /// Request the download of a file onto the client's machine
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="bytes"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task DownloadByteArrayAsync(string fileName, byte[] bytes, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -64,7 +89,12 @@ public class JsInteropService : DefaultJsInteropService
         );
     }
 
-    public Pos2 GetMousePosInContainer(string container)
+	/// <summary>
+	/// Get the position of the mouse cursor relative to a DOM element
+	/// </summary>
+	/// <param name="container">The CSS-Style selector of the container</param>
+	/// <returns>The position of the cursor relative to the container</returns>
+	public Pos2 GetMousePosInContainer(string container)
     {
         var mousePos = JsRuntime.Invoke<float[]>(Prefix + "utils.getMousePosInContainer", container);
         return new Pos2
@@ -74,6 +104,12 @@ public class JsInteropService : DefaultJsInteropService
         };
     }
 
+	/// <summary>
+	/// Get the dimensions of a DOM element
+	/// </summary>
+	/// <param name="container">The CSS-Style selector of the container</param>
+	/// <param name="element">The element to retreive the dimensions from</param>
+	/// <returns>The dimensions of a DOM element as ElementDimensions</returns>
 	public ElementDimensions GetElementDimensions(string container, string element)
 	{
 		var dim = JsRuntime.Invoke<float[]>(
@@ -97,16 +133,28 @@ public class JsInteropService : DefaultJsInteropService
 		};
 	}
 
+    /// <summary>
+    /// Copy a DOM element and make it follow the mouse cursor
+    /// </summary>
+    /// <param name="element"></param>
     public void StickElementToCursor(string element)
     {
         JsRuntime.InvokeVoid(Prefix + "utils.stickElementToCursor", element);
     }
 
-	public void UnstickElementFromCursor()
+    /// <summary>
+    /// Detaches all the copied elements from the cursor and deletes the copies
+    /// </summary>
+	public void UnstickElementsFromCursor()
 	{
 		JsRuntime.InvokeVoid(Prefix + "utils.unstickElementsFromCursor");
 	}
 
+    /// <summary>
+    /// Gets an attribute on the nearest parent of type "div" on the currently hovered element
+    /// </summary>
+    /// <param name="attr">The attribute to get</param>
+    /// <returns>The attribute's value as a string</returns>
     public string GetHoveredItemAttribute(string attr)
     {
         return JsRuntime.Invoke<string>(Prefix + "utils.getHoveredItemAttribute", attr);

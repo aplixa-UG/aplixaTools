@@ -4,8 +4,17 @@ namespace AplixaTools.Shared.Components;
 
 public partial class TextInput : ComponentBase
 {
+    /// <summary>
+    /// The faint text that is displayed when the Textbox is empty
+    /// </summary>
     [Parameter] public string Placeholder { get; set; }
+    /// <summary>
+    /// The default content of the Textbox
+    /// </summary>
     [Parameter] public string DefaultValue { get; set; } = "";
+    /// <summary>
+    /// Fires when the user exits the Textbox
+    /// </summary>
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
     private string _value = "";

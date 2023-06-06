@@ -6,11 +6,17 @@ namespace AplixaTools.PDFEdit.Components;
 
 public partial class PageSettingsModal
 {
+    /// <summary>
+    /// Fires when the user saves their selected settings.
+    /// </summary>
     [Parameter] public EventCallback OnSaved { get; set; }
 
     public Modal Modal { get; set; }
     public Dropdown RotationDropdown { get; set; }
 
+    /// <summary>
+    /// The selected rotation of the page
+    /// </summary>
     public PdfRotation Rotation { get => (PdfRotation)_rotation; }
 
     private int _rotation = 0;
