@@ -33,8 +33,8 @@
         var containerRect = container.getBoundingClientRect();
         var elemRect = elem.getBoundingClientRect();
 
-        var x = elemRect.left - containerRect.left;
-        var y = elemRect.top - containerRect.top;
+        var x = elemRect.left + container.scrollLeft - containerRect.left;
+        var y = elemRect.top + container.scrollTop - containerRect.top;
 
         return [x, y, elemRect.width, elemRect.height];
     }

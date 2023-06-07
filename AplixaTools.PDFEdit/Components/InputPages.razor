@@ -16,10 +16,10 @@
             var index = i;
             var file = _fileSources[index];
 
-            <DocumentPages  Index="@index"
+            <DocumentPages  @ref="@DocumentPagesRef"
+                            Index="@index"
                             Document="@file"
-                            OnPageAdded="DocumentPagesOnPageAdded" 
-                            OnDocumentAdded="DocumentPagesOnDocumentAdded"
+                            OnUpdate="DocumentPagesOnUpdate"
                             OnDocumentRemoved="DocumentPagesOnDocumentRemoved" />
         }
         @if (_fileSources.Count == 0)

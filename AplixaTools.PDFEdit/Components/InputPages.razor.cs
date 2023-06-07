@@ -1,4 +1,5 @@
 using AplixaTools.PDFEdit.Models;
+using AplixaTools.PDFEdit.Services;
 using iText.Kernel.Pdf;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -6,12 +7,17 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace AplixaTools.PDFEdit.Components;
 
 public partial class InputPages {
-    [Parameter] public EventCallback UpdateMerge { get; set; }
+    [Inject] public PdfMutationQueueService MutationService { get; set; }
 
-    public List<PdfFile> InputDocuments = new();
+    [Parameter] public EventCallback UpdateMerge { get; set; }
     
     private bool _dragging = false;
     private readonly List<PdfFile> _fileSources = new();
+    private readonly List<DocumentPages> _documentPages = new();
+    DocumentPages DocumentPagesRef
+    {
+        set { _documentPages.Add(value); }
+    }
 
     private async Task FileInputOnChange(InputFileChangeEventArgs e)
     {
@@ -36,27 +42,13 @@ public partial class InputPages {
         StateHasChanged();
     }
 
-    private async Task DocumentPagesOnPageAdded((int, int) indices)
-    {
-        var doc = _fileSources[indices.Item1];
-        var page = doc.ExtractPages(indices.Item2, indices.Item2 + 1);
-        InputDocuments.Add(page);
-        await UpdateMerge.InvokeAsync();
-    }
-
     private void DocumentPagesOnDocumentRemoved(int index)
     {
         _fileSources.RemoveAt(index);
     }
 
-    private async Task DocumentPagesOnDocumentAdded(int documentIndex)
+    private async Task DocumentPagesOnUpdate()
     {
-        var doc = _fileSources[documentIndex];
-        for (int i = 0; i < doc.PageCount; i++)
-        {
-            var page = doc.ExtractPages(i, i + 1);
-            InputDocuments.Add(page);
-        }
         await UpdateMerge.InvokeAsync();
     }
 }

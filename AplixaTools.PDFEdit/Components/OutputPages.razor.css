@@ -50,8 +50,24 @@ img {
 }
 
     .header .options {
+        padding-top: .8rem;
         width: 100%;
+        justify-content: space-between;
     }
+
+        .header .options ::deep .loader-container {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .header .options ::deep .loader {
+            font-size: 6px;
+        }
+
+        .header .options ::deep svg {
+            width: 2rem;
+            height: 2rem;
+        }
 
 ::deep .preview {
     display: flex;

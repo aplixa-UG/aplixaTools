@@ -12,6 +12,7 @@ namespace AplixaTools.PDFEdit.Pages;
 [Route(Routes.CombineTool)]
 public partial class Combine : IDisposable
 {
+    [Inject] public PdfMutationQueueService MutationService { get; set; }
     [Inject] public JsInteropService JsInterop { get; set; }
 
     public Modal ConfirmClearModal { get; set; }
@@ -29,25 +30,29 @@ public partial class Combine : IDisposable
         base.OnAfterRender(firstRender);
     }
 
-    private async Task ConfirmClearOnClick()
+    private void ConfirmClearOnClick()
     {
         OutputPages.StartLoading();
-        InputPages.InputDocuments.Clear();
+        MutationService.QuequeMutation(new PdfClearMutation());
         ConfirmClearModal.Hide();
-        await OutputPages.UpdateMerge();
     }
 
-    private async Task PageSettingsOnSave()
+    private void PageSettingsOnSave()
     {
         OutputPages.StartLoading();
-        InputPages.InputDocuments[OutputPages.SelectedPage] = InputPages.InputDocuments[OutputPages.SelectedPage].TransformPage(0, new PdfTransform
-        {
-            Angle = PageSettingsModal.Rotation,
-        });
-        await OutputPages.UpdateMerge();
+        MutationService.QuequeMutation(
+            new PdfTransformPageMutation(
+                OutputPages.SelectedPage,
+                0,
+                new PdfTransform
+                {
+                    Angle = PageSettingsModal.Rotation,
+                }
+            )
+        );
     }
 
-    private async Task UpdateMerge()
+    private void UpdateMerge()
     {
         if (OutputPages is not {})
         {
@@ -56,7 +61,6 @@ public partial class Combine : IDisposable
         OutputPages.StartLoading();
         StateHasChanged();
 
-        await OutputPages.UpdateMerge();
         StateHasChanged();
     }
 

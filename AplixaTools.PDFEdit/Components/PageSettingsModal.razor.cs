@@ -33,6 +33,7 @@ public partial class PageSettingsModal
     {
         RotationDropdown.SelectedIndex = (int)rotation;
         _rotation = (int)rotation;
+        StateHasChanged();
         Modal.Show();
     }
 

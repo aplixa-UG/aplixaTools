@@ -6,26 +6,27 @@
                 Placeholder="Dateiname"
                 ValueChanged="FileNameOnValueChanged"
             />
+            <button @onclick="() => _loading = !_loading">Loading</button>
+            <button @onclick="UpdateMerge">UpdateMerge</button>
+            @if (_loading && MutationService.Files.Count > 0)
+            {
+                <Spinner />
+            }
+            else
+            {
+                <Icon Href="@Icons.FileCheckmark"></Icon>
+            }
         </div>
     </div>
-    @if (_loading && InputPages.InputDocuments.Count > 0)
-    {
-        <div class="preview">
-            <Spinner />
-        </div>
-    }
-    else
-    {
-        <DragDropArea @ref="_dragDropArea" OnItemDrop="@OutputPreviewOnItemDrop" Items="@_outputDocumentPreviewPages" Class="preview" TItem="PreviewPage">
-            <div class="preview-image">
-                <div class="overlay">
-                    <div data-clickable="true" @onclick="async _ => await OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
-                    <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
-                </div>
-                <img src="@context.Image">
+    <DragDropArea @ref="DragDropArea" OnItemDrop="@OutputPreviewOnItemDrop" Items="@MutationService.Previews" Class="preview" TItem="PreviewPage">
+        <div style=@($"transform: rotate({context.Transform.Angle.ToFloat()}deg)") class="preview-image">
+            <div class="overlay">
+                <div data-clickable="true" @onclick="_ => OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
+                <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
             </div>
-        </DragDropArea>
-    }
+            <img src="@context.Image">
+        </div>
+    </DragDropArea>
     <div class="d-flex flex-row gap-1">
         <button class="btn btn-primary w-100" @onclick="ClearButtonOnClick">
             <Icon Href="@Icons.TrashCan" />

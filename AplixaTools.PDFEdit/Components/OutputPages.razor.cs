@@ -8,6 +8,7 @@ namespace AplixaTools.PDFEdit.Components;
 
 public partial class OutputPages : IDisposable {
     [Inject] public JsInteropService JsInterop { get; set; }
+    [Inject] public PdfMutationQueueService MutationService { get; set; }
 
     [Parameter] public InputPages InputPages { get; set; }
     [Parameter] public PageSettingsModal PageSettingsModal { get; set; }
@@ -16,53 +17,43 @@ public partial class OutputPages : IDisposable {
     public int SelectedPage;
 
     private string _outputDocumentFileName = "merge.pdf";
-    private readonly List<PreviewPage> _outputDocumentPreviewPages = new();
     private CancellationTokenSource _previewCancellationTokenSource = new();
-    private PdfFile _outputDocument = new();
+    private PdfFile _outputDocument = null;
     private bool _loading = false;
     
-    private DragDropArea<PreviewPage> _dragDropArea { get; set; }
+    public DragDropArea<PreviewPage> DragDropArea { get; set; }
 
-    private async Task OutputPreviewOnItemDrop(int[] order)
+    protected override void OnInitialized()
     {
-        if (InputPages is not {}) 
-        {
-            return;
-        }
+        MutationService.PreviewUpdated += MutationServiceOnPreviewUpdated;
+        base.OnInitialized();
+    }
 
-        StartLoading();
-        
-        _outputDocumentPreviewPages.Clear();
+    private void MutationServiceOnPreviewUpdated(object sender, MutationQueuedEventArgs e)
+    {
+        DragDropArea.Update(e.ComputedPreviews);
         StateHasChanged();
-
-        InputPages.InputDocuments = order.Select(i => InputPages.InputDocuments?[i]).ToList();
-
-        await UpdateMerge();
+        Console.WriteLine("Preview Updated");
     }
 
     public async Task UpdateMerge()
     {
-        if (InputPages is not {}) 
-        {
-            return;
-        }
-
         StartLoading();
 
         _previewCancellationTokenSource.Cancel();
         _previewCancellationTokenSource = new();
-        if (InputPages.InputDocuments.Count == 0)
+
+        var inputDocuments = await Task.Run(MutationService.ProcessMutations);
+
+        if (inputDocuments.Count == 0)
         {
-            
             _outputDocument = null;
-            _outputDocumentPreviewPages.Clear();
-            await UpdatePreview();
             return;
         }
 
-        _outputDocument = PdfUtils.MergePdfFiles(InputPages.InputDocuments, _outputDocumentFileName);
-        _outputDocumentPreviewPages.Clear();
-        await UpdatePreview();
+        _outputDocument = await Task.Run(() => PdfUtils.MergePdfFiles(inputDocuments, _outputDocumentFileName));
+        _loading = false;
+        StateHasChanged();
     }
 
     private void FileNameOnValueChanged(string fileName)
@@ -75,62 +66,40 @@ public partial class OutputPages : IDisposable {
         }
     }
 
-    public async Task UpdatePreview()
-    {
-        var count = 0;
-        if (_outputDocument is { })
-        {
-            count = _outputDocument.PageCount;
-        }
-        _outputDocumentPreviewPages.Clear();
-        for (int i = 0; i < count; i++)
-        {
-            try
-            {
-                var preview = await JsInterop.PDFtoJPEGAsync(_outputDocument.Content, i, _previewCancellationTokenSource.Token);
-                if (preview is not { })
-                {
-                    continue;
-                }
-                _outputDocumentPreviewPages.Add(new PreviewPage {
-                    Index = i,
-                    Image = preview
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                continue;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-        _loading = false;
-        StateHasChanged();
-        _dragDropArea.Update();
-    }
-
     private async Task OnPageRemoved(int pageIndex)
     {
         StartLoading();
-        InputPages.InputDocuments?.RemoveAt(pageIndex);
+
+        MutationService.QuequeMutation(new PdfRemovePageMutation(pageIndex));
+
+        await UpdateMerge();
+    }
+
+    private async Task OutputPreviewOnItemDrop(int[] order)
+    {
+        StartLoading();
+
+        MutationService.QuequeMutation(new PdfRearrangementMutation(order));
+
         await UpdateMerge();
     }
 
     private void OnSettings(int pageIndex)
     {
-        
         SelectedPage = pageIndex;
-        var transform = InputPages.InputDocuments?[pageIndex].GetPageTransform(0);
+        var transform = MutationService.Previews[pageIndex].Transform;
         PageSettingsModal.Show(transform.Angle);
     }
 
     private async Task MergeButtonOnClick()
     {
-        if (_outputDocument is not { } || _outputDocument.Content.Length == 0)
+        if (_outputDocument is not { })
         {
-            return;
+            await UpdateMerge();
+            if (_outputDocument is not { })
+            {
+                return;
+            }
         }
         await JsInterop.DownloadByteArrayAsync(_outputDocument.Name, _outputDocument.Content, CancellationToken.None);
     }

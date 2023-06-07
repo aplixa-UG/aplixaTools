@@ -29,27 +29,31 @@ public partial class DragDropArea<TItem>
 	private List<TItem> _items = new();
 	private string[] _itemClasses = Array.Empty<string>();
 	private int _selectedItem = -1;
+	private bool _updateElementDimensions = false;
+	private bool _stickElementToCursor = false;
 
 	private readonly List<int> _indices = new();
 	private readonly List<ElementDimensions> _elementDimensions = new();
 
 	protected override void OnInitialized()
 	{
-		Update();
+		Update(Items);
 
 		base.OnInitialized();
 	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{
-		if (firstRender)
+		if (firstRender || _updateElementDimensions)
 		{
 			UpdateElementDimensions();
+			_updateElementDimensions = false;
 		}
 
-		if (_selectedItem > -1)
+		if (_selectedItem > -1 && _stickElementToCursor)
 		{
 			JsInterop.StickElementToCursor($"#dragdroparea-{GetHashCode()} .grabbed");
+			_stickElementToCursor = false;
 		}
 
 		base.OnAfterRender(firstRender);
@@ -58,40 +62,42 @@ public partial class DragDropArea<TItem>
 	/// <summary>
 	/// Updates the DragDropArea. Should be used synonimously with StateHasChanged
 	/// </summary>
-	public void Update()
+	public void Update(IEnumerable<TItem> items)
 	{
-        _items = Items.ToList();
-        _itemClasses = new string[Items.Count()];
+        _items = items.ToList();
+        _itemClasses = new string[items.Count()];
 
 		_indices.Clear();
 
-        for (int i = 0; i < Items.Count(); i++)
+        for (int i = 0; i < items.Count(); i++)
         {
             _indices.Add(i);
         }
-    }
+
+		Console.WriteLine(string.Join(", ", _indices));
+		Console.WriteLine(string.Join(", ", items.Select(o => (o as PreviewPage).Index)));
+
+		_updateElementDimensions = true;
+		StateHasChanged();
+	}
 
     private void MoveItem(int from, int to)
 	{
-		
-		var item = _items[from];
-		_items.RemoveAt(from);
-		_items.Insert(to, item);
-
-		_indices.RemoveAt(from);
-		_indices.Insert(to, from);
+		Console.WriteLine($"From {from} to {to}");
+		_indices[to] = from;
+		_indices[from] = to;
 	}
 
 	private void ItemOnMouseDown(int i)
 	{
 		if (JsInterop.GetHoveredItemAttribute("data-clickable") == "true")
 		{
-			
 			return;
 		}
 
 		_itemClasses[i] = "grabbed";
 		_selectedItem = i;
+		_stickElementToCursor = true;
 	}
 
 	private async Task ContainerOnMouseUp()
@@ -102,6 +108,7 @@ public partial class DragDropArea<TItem>
 		}
 
 		JsInterop.UnstickElementsFromCursor();
+
 		var ownDimensions = JsInterop.GetElementDimensions(
 			"body",
 			$"#dragdroparea-{GetHashCode()}"
@@ -110,13 +117,16 @@ public partial class DragDropArea<TItem>
 		var pos = JsInterop.GetMousePosInContainer($"#dragdroparea-{GetHashCode()}");
 		_itemClasses = new string[_items.Count];
 
+		Console.WriteLine($"Mouse at X={pos.X} Y={pos.Y}");
+
 		for (int j = 0; j < _items.Count; j++)
 		{
 			var dimensions = _elementDimensions[j];
-
+			Console.WriteLine($"{(dimensions.Contains(pos) ? "Dropped" : "Not droppend")} in Page {j}");
 			if (dimensions.Contains(pos))
 			{
 				MoveItem(_selectedItem, j);
+				break;
 			}
 
 			if (j + 1 < _items.Count)
@@ -142,10 +152,12 @@ public partial class DragDropArea<TItem>
 		await OnItemDrop.InvokeAsync(_indices.ToArray());
 
 		_selectedItem = -1;
-	}
+        _stickElementToCursor = false;
+    }
 
-	private void UpdateElementDimensions()
+    private void UpdateElementDimensions()
 	{
+		var t = DateTime.Now;
 		_elementDimensions.Clear();
 
 		for (int i = 0; i < _items.Count; i++)
@@ -155,8 +167,8 @@ public partial class DragDropArea<TItem>
 				$"#dragdroparea-{GetHashCode()}",
 				query
 			);
-
+			Console.WriteLine($"New Dimensions of Page {i}: Size: X={dimensions.Size.X}, Y={dimensions.Size.Y}; Position: X={dimensions.Position.X}, Y={dimensions.Position.Y}");
             _elementDimensions.Add(dimensions);
 		}
-	}
+    }
 }

@@ -15,6 +15,8 @@ builder.Services.AddTransient<DefaultJsInteropService>(serviceProvider =>
     serviceProvider.GetRequiredService<JsInteropService>());
 builder.Services.AddTransient<JsInteropService>();
 
+builder.Services.AddSingleton<PdfMutationQueueService>();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();

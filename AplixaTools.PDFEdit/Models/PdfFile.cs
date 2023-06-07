@@ -7,9 +7,9 @@ public class PdfFile
     /// <summary>
     /// (Optional) The name of the PDF File (e.g. "merge.pdf")
     /// </summary>
-    public string Name { get; set; }
-    public int PageCount { get; set; }
-    public byte[] Content { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int PageCount { get; set; } = 0;
+    public byte[] Content { get; set; } = Array.Empty<byte>();
 
 	/// <summary>
 	/// Extracts pages from a PdfFile and puts them into a new PdfFile
@@ -24,9 +24,7 @@ public class PdfFile
         {
             return new PdfFile
             {
-                Name = name,
-                Content = Array.Empty<byte>(),
-                PageCount = 0
+                Name = name
             };
         }
 
