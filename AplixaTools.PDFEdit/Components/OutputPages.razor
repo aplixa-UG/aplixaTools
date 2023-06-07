@@ -6,8 +6,6 @@
                 Placeholder="Dateiname"
                 ValueChanged="FileNameOnValueChanged"
             />
-            <button @onclick="() => _loading = !_loading">Loading</button>
-            <button @onclick="UpdateMerge">UpdateMerge</button>
             @if (_loading && MutationService.Files.Count > 0)
             {
                 <Spinner />

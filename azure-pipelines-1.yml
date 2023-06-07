@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
+- develop
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -12,11 +12,11 @@ pool:
 name: 1.0$(Rev:.r)
 
 variables:
-  buildConfiguration: 'Release'
+  buildConfiguration: 'Debug'
   version: $(Build.BuildNumber)
   solution: "./AplixaTools.sln"
   pathPDFEdit: "./AplixaTools.PDFEdit/AplixaTools.PDFEdit.csproj"
-  outputDirPDFEdit: "./AplixaTools.PDFEdit/bin/Release/net7.0/publish"
+  outputDirPDFEdit: "./AplixaTools.PDFEdit/bin/Debug/net7.0/publish"
 
 steps:
 - task: UseDotNet@2
@@ -35,12 +35,3 @@ steps:
     command: 'test'
     arguments: '--filter "Category!=ExcludeForCI"'
     projects: $(solution)
-
-- script: dotnet publish $(system.defaultworkingdirectory)/$(pathPDFEdit) --configuration $(buildConfiguration) -p:Version=$(version)
-  displayName: 'publish PDFEdit'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'publish artifacts: PDFEdit'
-  inputs:
-        artifactName: 'PDFEdit'
-        pathtoPublish: '$(system.defaultworkingdirectory)/$(outputDirPDFEdit)'
