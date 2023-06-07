@@ -36,6 +36,17 @@
         var x = elemRect.left + container.scrollLeft - containerRect.left;
         var y = elemRect.top + container.scrollTop - containerRect.top;
 
+        var rot = parseFloat(elem.firstElementChild.getAttribute("rotation"));
+
+        console.log(elem.firstElementChild);
+        console.log(elem.firstElementChild.getAttribute("rotation"));
+        console.log(rot + "deg")
+
+        if (rot == 90 || rot == 270) {
+            var topOffset = (elemRect.height - elemRect.width) / 2;
+            console.log([x - topOffset, y + topOffset, elemRect.height, elemRect.width]);
+            return [x - topOffset, y + topOffset, elemRect.height, elemRect.width];
+        }
         return [x, y, elemRect.width, elemRect.height];
     }
 

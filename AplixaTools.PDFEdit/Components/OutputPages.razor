@@ -17,10 +17,12 @@
         </div>
     </div>
     <DragDropArea @ref="DragDropArea" OnItemDrop="@OutputPreviewOnItemDrop" Items="@MutationService.Previews" Class="preview" TItem="PreviewPage">
-        <div style=@($"transform: rotate({context.Transform.Angle.ToFloat()}deg)") class="preview-image">
+        <div rotation="@context.Transform.Angle.ToFloat()" style=@($"transform: rotate({context.Transform.Angle.ToFloat()}deg)") class="preview-image">
             <div class="overlay">
-                <div data-clickable="true" @onclick="_ => OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
-                <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
+                <div style =@($"transform: rotate({-context.Transform.Angle.ToFloat()}deg)")>
+                    <div data-clickable="true" @onclick="_ => OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
+                    <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
+                </div>
             </div>
             <img src="@context.Image">
         </div>

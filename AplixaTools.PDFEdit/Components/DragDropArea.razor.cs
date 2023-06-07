@@ -157,7 +157,6 @@ public partial class DragDropArea<TItem>
 
     private void UpdateElementDimensions()
 	{
-		var t = DateTime.Now;
 		_elementDimensions.Clear();
 
 		for (int i = 0; i < _items.Count; i++)
@@ -167,7 +166,6 @@ public partial class DragDropArea<TItem>
 				$"#dragdroparea-{GetHashCode()}",
 				query
 			);
-			Console.WriteLine($"New Dimensions of Page {i}: Size: X={dimensions.Size.X}, Y={dimensions.Size.Y}; Position: X={dimensions.Position.X}, Y={dimensions.Position.Y}");
             _elementDimensions.Add(dimensions);
 		}
     }

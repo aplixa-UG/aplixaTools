@@ -21,7 +21,6 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 1rem;
     align-items: center;
     color: white;
     transition: opacity 500ms ease;
@@ -36,6 +35,12 @@
         width: 3rem;
         height: 3rem;
         cursor: pointer;
+    }
+
+    .preview-image .overlay > div {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
     }
 
 img {

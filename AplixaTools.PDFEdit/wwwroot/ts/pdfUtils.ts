@@ -16,6 +16,7 @@ namespace org.site.pdfUtils {
         let renderContext = { canvasContext: ctx, viewport: viewport };
 
         await page.render(renderContext).promise
+
         return canvas.toDataURL();
     }
 }

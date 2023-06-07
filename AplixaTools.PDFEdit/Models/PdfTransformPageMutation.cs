@@ -1,7 +1,12 @@
-﻿namespace AplixaTools.PDFEdit.Models;
+﻿using AplixaTools.PDFEdit.Services;
+using Microsoft.AspNetCore.Components;
+
+namespace AplixaTools.PDFEdit.Models;
 
 public class PdfTransformPageMutation : IPdfMutation
 {
+    [Inject] public JsInteropService JsInterop { get; set; }
+
     public int DocumentIndex;
     public int PageIndex;
     public PdfTransform Transform;

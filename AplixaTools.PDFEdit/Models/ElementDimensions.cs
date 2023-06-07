@@ -24,4 +24,22 @@ public class ElementDimensions
 		}
 		return false;
 	}
+
+	/// <summary>
+	/// Rotates the dimensions
+	/// </summary>
+	/// <param name="rot"></param>
+	public void Rotate(PdfRotation rot)
+	{
+		if (rot == PdfRotation.deg90 || rot == PdfRotation.deg270)
+		{
+			var w = Size.X;
+			Size.X = Size.Y;
+			Size.Y = w;
+
+            var x = Position.X;
+            Position.X = Position.Y;
+            Position.Y = x;
+        }
+	}
 }
