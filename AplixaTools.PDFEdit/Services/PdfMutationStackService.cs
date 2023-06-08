@@ -8,11 +8,13 @@ public class PdfMutationQueueService
     private Queue<IPdfMutation> _mutationQueue = new();
 
     public List<PreviewPage> Previews = new();
-    public event EventHandler<MutationQueuedEventArgs> PreviewUpdated;
 
-    public void QuequeMutation(IPdfMutation mutation)
+    public event EventHandler<MutationQueuedEventArgs> PreviewUpdated;
+    public event EventHandler MergeUpdateRequested;
+    public event EventHandler StartLoadingRequested;
+
+    public void QueueMutation(IPdfMutation mutation)
     {
-        Console.WriteLine($"Queueing {mutation}");
         Previews = mutation.MutatePreview(Previews);
         PreviewUpdated?.Invoke(
             this,
@@ -23,6 +25,7 @@ public class PdfMutationQueueService
             }
         );
         _mutationQueue.Enqueue(mutation);
+        RequestMergeUpdate();
     }
 
     public List<PdfFile> ProcessMutations()
@@ -33,5 +36,15 @@ public class PdfMutationQueueService
         }
 
         return Files;
+    }
+
+    public void RequestMergeUpdate()
+    {
+        MergeUpdateRequested.Invoke(this, EventArgs.Empty);
+    }
+
+    public void RequestStartLoading()
+    {
+        StartLoadingRequested.Invoke(this, EventArgs.Empty);
     }
 }

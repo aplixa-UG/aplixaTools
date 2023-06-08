@@ -9,8 +9,6 @@ namespace AplixaTools.PDFEdit.Components;
 public partial class InputPages {
     [Inject] public PdfMutationQueueService MutationService { get; set; }
 
-    [Parameter] public EventCallback UpdateMerge { get; set; }
-    
     private bool _dragging = false;
     private readonly List<PdfFile> _fileSources = new();
     private readonly List<DocumentPages> _documentPages = new();
@@ -47,8 +45,8 @@ public partial class InputPages {
         _fileSources.RemoveAt(index);
     }
 
-    private async Task DocumentPagesOnUpdate()
+    private void DocumentPagesOnUpdate()
     {
-        await UpdateMerge.InvokeAsync();
+        MutationService.RequestMergeUpdate();
     }
 }

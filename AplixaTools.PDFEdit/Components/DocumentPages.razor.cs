@@ -60,7 +60,10 @@ public partial class DocumentPages
             for (int i = 0; i < Document.PageCount; i++)
             {
                 var page = Document.ExtractPages(i, i + 1);
-                MutationService.QuequeMutation(
+
+                MutationService.RequestStartLoading();
+
+                MutationService.QueueMutation(
                 new PdfAddFileMutation(
                     page,
                     new PreviewPage
@@ -91,7 +94,10 @@ public partial class DocumentPages
     private async Task PageAdded(int index)
     {
         var page = Document.ExtractPages(index, index + 1);
-        MutationService.QuequeMutation(
+
+        MutationService.RequestStartLoading();
+
+        MutationService.QueueMutation(
             new PdfAddFileMutation(
                 page,
                 new PreviewPage

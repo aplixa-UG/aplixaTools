@@ -10,7 +10,6 @@ public partial class OutputPages : IDisposable {
     [Inject] public JsInteropService JsInterop { get; set; }
     [Inject] public PdfMutationQueueService MutationService { get; set; }
 
-    [Parameter] public InputPages InputPages { get; set; }
     [Parameter] public PageSettingsModal PageSettingsModal { get; set; }
     [Parameter] public Modal ConfirmClearModal { get; set; }
 
@@ -26,6 +25,8 @@ public partial class OutputPages : IDisposable {
     protected override void OnInitialized()
     {
         MutationService.PreviewUpdated += MutationServiceOnPreviewUpdated;
+        MutationService.MergeUpdateRequested += MutationServiceOnMergeUpdateRequested;
+        MutationService.StartLoadingRequested += MutationServiceOnStartLoadingRequested;
         base.OnInitialized();
     }
 
@@ -36,9 +37,9 @@ public partial class OutputPages : IDisposable {
         Console.WriteLine("Preview Updated");
     }
 
-    public async Task UpdateMerge()
+    public async void MutationServiceOnMergeUpdateRequested(object sender, EventArgs e)
     {
-        StartLoading();
+        MutationService.RequestStartLoading();
 
         _previewCancellationTokenSource.Cancel();
         _previewCancellationTokenSource = new();
@@ -48,11 +49,19 @@ public partial class OutputPages : IDisposable {
         if (inputDocuments.Count == 0)
         {
             _outputDocument = null;
+            _loading = false;
+            StateHasChanged();
             return;
         }
 
         _outputDocument = await Task.Run(() => PdfUtils.MergePdfFiles(inputDocuments, _outputDocumentFileName));
         _loading = false;
+        StateHasChanged();
+    }
+
+    public void MutationServiceOnStartLoadingRequested(object sender, EventArgs e)
+    {
+        _loading = true;
         StateHasChanged();
     }
 
@@ -66,22 +75,18 @@ public partial class OutputPages : IDisposable {
         }
     }
 
-    private async Task OnPageRemoved(int pageIndex)
+    private void OnPageRemoved(int pageIndex)
     {
-        StartLoading();
+        MutationService.RequestStartLoading();
 
-        MutationService.QuequeMutation(new PdfRemovePageMutation(pageIndex));
-
-        await UpdateMerge();
+        MutationService.QueueMutation(new PdfRemovePageMutation(pageIndex));
     }
 
-    private async Task OutputPreviewOnItemDrop(int[] order)
+    private void OutputPreviewOnItemDrop(int[] order)
     {
-        StartLoading();
+        MutationService.RequestStartLoading();
 
-        MutationService.QuequeMutation(new PdfRearrangementMutation(order));
-
-        await UpdateMerge();
+        MutationService.QueueMutation(new PdfRearrangementMutation(order));
     }
 
     private void OnSettings(int pageIndex)
@@ -95,7 +100,7 @@ public partial class OutputPages : IDisposable {
     {
         if (_outputDocument is not { })
         {
-            await UpdateMerge();
+            MutationService.RequestMergeUpdate();
             if (_outputDocument is not { })
             {
                 return;
@@ -107,12 +112,6 @@ public partial class OutputPages : IDisposable {
     private void ClearButtonOnClick()
     {
         ConfirmClearModal.Show();
-    }
-
-    public void StartLoading()
-    {
-        _loading = true;
-        StateHasChanged();
     }
 
     public void Dispose()

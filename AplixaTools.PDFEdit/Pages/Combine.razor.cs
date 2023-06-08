@@ -18,7 +18,6 @@ public partial class Combine : IDisposable
     public Modal ConfirmClearModal { get; set; }
     public PageSettingsModal PageSettingsModal { get; set; }
     public OutputPages OutputPages { get; set; }
-    public InputPages InputPages { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -32,15 +31,18 @@ public partial class Combine : IDisposable
 
     private void ConfirmClearOnClick()
     {
-        OutputPages.StartLoading();
-        MutationService.QuequeMutation(new PdfClearMutation());
+        MutationService.RequestStartLoading();
+
+        MutationService.QueueMutation(new PdfClearMutation());
+
         ConfirmClearModal.Hide();
     }
 
     private void PageSettingsOnSave()
     {
-        OutputPages.StartLoading();
-        MutationService.QuequeMutation(
+        MutationService.RequestStartLoading();
+
+        MutationService.QueueMutation(
             new PdfTransformPageMutation(
                 OutputPages.SelectedPage,
                 0,
@@ -50,18 +52,6 @@ public partial class Combine : IDisposable
                 }
             )
         );
-    }
-
-    private void UpdateMerge()
-    {
-        if (OutputPages is not {})
-        {
-            return;
-        }
-        OutputPages.StartLoading();
-        StateHasChanged();
-
-        StateHasChanged();
     }
 
     public void Dispose()
