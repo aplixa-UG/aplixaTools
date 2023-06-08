@@ -17,14 +17,16 @@
         </div>
     </div>
     <DragDropArea @ref="DragDropArea" OnItemDrop="@OutputPreviewOnItemDrop" Items="@MutationService.Previews" Class="preview" TItem="PreviewPage">
-        <div rotation="@context.Transform.Angle.ToFloat()" style=@($"transform: rotate({context.Transform.Angle.ToFloat()}deg)") class="preview-image">
-            <div class="overlay">
-                <div style =@($"transform: rotate({-context.Transform.Angle.ToFloat()}deg)")>
-                    <div data-clickable="true" @onclick="_ => OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
-                    <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
+        <div class="preview-wrapper" style="@(context.Transform.Angle == PdfRotation.deg90 || context.Transform.Angle == PdfRotation.deg270 ? "aspect-ratio: 1;" : "")">
+            <div rotation="@context.Transform.Angle.ToFloat()" style=@($"transform: rotate({context.Transform.Angle.ToFloat()}deg);") class="preview-image">
+                <div class="overlay">
+                    <div style =@($"transform: rotate({-context.Transform.Angle.ToFloat()}deg)")>
+                        <div data-clickable="true" @onclick="_ => OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
+                        <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
+                    </div>
                 </div>
+                <img src="@context.Image">
             </div>
-            <img src="@context.Image">
         </div>
     </DragDropArea>
     <div class="d-flex flex-row gap-1">

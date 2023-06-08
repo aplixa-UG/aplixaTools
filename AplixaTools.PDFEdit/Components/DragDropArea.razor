@@ -11,9 +11,9 @@
 		var item = _items[idx];
 
 		<div 
-			id=@($"dragdropitem-{idx}") 
-			class="@_itemClasses[idx]"
-			@onmousedown="e => ItemOnMouseDown(idx)" >
+		id=@($"dragdropitem-{idx}") 
+		class="@_itemClasses[idx]"
+		@onmousedown="e => ItemOnMouseDown(idx)" >
 
 			@ChildContent(item)
 		</div>

@@ -31,11 +31,14 @@ public partial class DragDropArea<TItem>
 	private int _selectedItem = -1;
 	private bool _updateElementDimensions = false;
 	private bool _stickElementToCursor = false;
+	private bool _elementDimensionsProcessed = false;
 
 	private readonly List<int> _indices = new();
-	private readonly List<ElementDimensions> _elementDimensions = new();
+	private readonly List<float> _margins = new();
 
-	protected override void OnInitialized()
+    private List<ElementDimensions> _elementDimensions = new();
+
+    protected override void OnInitialized()
 	{
 		Update(Items);
 
@@ -59,24 +62,24 @@ public partial class DragDropArea<TItem>
 		base.OnAfterRender(firstRender);
 	}
 
-	/// <summary>
-	/// Updates the DragDropArea. Should be used synonimously with StateHasChanged
-	/// </summary>
-	public void Update(IEnumerable<TItem> items)
-	{
+    /// <summary>
+    /// Updates the DragDropArea. Should be used synonimously with StateHasChanged
+    /// </summary>
+    public void Update(IEnumerable<TItem> items)
+    {
         _items = items.ToList();
         _itemClasses = new string[items.Count()];
 
-		_indices.Clear();
+        _indices.Clear();
 
         for (int i = 0; i < items.Count(); i++)
         {
             _indices.Add(i);
         }
 
-		_updateElementDimensions = true;
-		StateHasChanged();
-	}
+        _updateElementDimensions = true;
+        StateHasChanged();
+    }
 
     private void MoveItem(int from, int to)
 	{
@@ -151,9 +154,10 @@ public partial class DragDropArea<TItem>
 
     private void UpdateElementDimensions()
 	{
+		_elementDimensionsProcessed = false;
 		_elementDimensions.Clear();
 
-		for (int i = 0; i < _items.Count; i++)
+        for (int i = 0; i < _items.Count; i++)
 		{
 			var query = $"#dragdropitem-{i}";
 			var dimensions = JsInterop.GetElementDimensions(
@@ -161,6 +165,9 @@ public partial class DragDropArea<TItem>
 				query
 			);
             _elementDimensions.Add(dimensions);
-		}
+        }
+
+		_elementDimensionsProcessed = true;
+		StateHasChanged();
     }
 }

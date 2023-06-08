@@ -7,6 +7,11 @@
     min-width: 480px;
 }
 
+.preview-wrapper {
+    display: grid;
+    place-items: center;
+}
+
 .preview-image {
     position: relative;
     width: min-content;
@@ -41,6 +46,7 @@
         display: flex;
         flex-direction: row;
         gap: 1rem;
+        transform-box: border-box;
     }
 
 img {
