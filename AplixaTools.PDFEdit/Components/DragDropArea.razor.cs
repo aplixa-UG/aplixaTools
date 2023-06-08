@@ -74,16 +74,12 @@ public partial class DragDropArea<TItem>
             _indices.Add(i);
         }
 
-		Console.WriteLine(string.Join(", ", _indices));
-		Console.WriteLine(string.Join(", ", items.Select(o => (o as PreviewPage).Index)));
-
 		_updateElementDimensions = true;
 		StateHasChanged();
 	}
 
     private void MoveItem(int from, int to)
 	{
-		Console.WriteLine($"From {from} to {to}");
 		_indices[to] = from;
 		_indices[from] = to;
 	}
@@ -117,12 +113,10 @@ public partial class DragDropArea<TItem>
 		var pos = JsInterop.GetMousePosInContainer($"#dragdroparea-{GetHashCode()}");
 		_itemClasses = new string[_items.Count];
 
-		Console.WriteLine($"Mouse at X={pos.X} Y={pos.Y}");
 
 		for (int j = 0; j < _items.Count; j++)
 		{
 			var dimensions = _elementDimensions[j];
-			Console.WriteLine($"{(dimensions.Contains(pos) ? "Dropped" : "Not droppend")} in Page {j}");
 			if (dimensions.Contains(pos))
 			{
 				MoveItem(_selectedItem, j);

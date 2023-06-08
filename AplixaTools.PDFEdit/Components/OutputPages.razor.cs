@@ -34,7 +34,6 @@ public partial class OutputPages : IDisposable {
     {
         DragDropArea.Update(e.ComputedPreviews);
         StateHasChanged();
-        Console.WriteLine("Preview Updated");
     }
 
     public async void MutationServiceOnMergeUpdateRequested(object sender, EventArgs e)
