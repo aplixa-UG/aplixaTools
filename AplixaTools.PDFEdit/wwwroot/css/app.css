@@ -2,8 +2,8 @@
 
 :root {
     --bg-main: #ffffff;
-    --text-main: #000000;
-    --bg-nav: #4677F4;
+    --text-main: #272727;
+    --bg-nav: rgba(49, 99, 173, 0.95);
     --text-nav: #ffffff;
     --top-bar-height: 75px;
 }
@@ -14,6 +14,8 @@ html, body {
     text-align: left;
     height: 100%;
     width: 100%;
+    background: var(--bg-main);
+    color: var(--text-main)
 }
 
 #app {

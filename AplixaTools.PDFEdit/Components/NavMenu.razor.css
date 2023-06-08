@@ -20,7 +20,7 @@
 ::deep .title {
     font-weight: 900;
     font-size: 1.5rem;
-    margin-inline: 2rem;
+    margin-inline: 1rem;
     color: #ffffff;
     text-decoration: none;
 }
@@ -164,3 +164,7 @@
                 left: 18px;
                 bottom: 6px;
             }
+
+::deep #logo {
+    height: 36px;
+}
