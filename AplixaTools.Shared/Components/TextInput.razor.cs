@@ -4,10 +4,14 @@ namespace AplixaTools.Shared.Components;
 
 public partial class TextInput : ComponentBase
 {
-    /// <summary>
-    /// The faint text that is displayed when the Textbox is empty
-    /// </summary>
-    [Parameter] public string Placeholder { get; set; }
+	/// <summary>
+	/// The classes to apply to the input
+	/// </summary>
+	[Parameter] public string Class { get; set; }
+	/// <summary>
+	/// The faint text that is displayed when the Textbox is empty
+	/// </summary>
+	[Parameter] public string Placeholder { get; set; }
     /// <summary>
     /// The default content of the Textbox
     /// </summary>

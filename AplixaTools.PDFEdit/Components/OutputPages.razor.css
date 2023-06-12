@@ -90,3 +90,7 @@ img {
     padding: 1rem;
     gap: 1rem;
 }
+
+::deep .filename-input {
+    width: 100%;
+}
