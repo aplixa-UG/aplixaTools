@@ -1,7 +1,12 @@
-﻿namespace AplixaTools.PDFEdit.Models;
+﻿using AplixaTools.PDFEdit.Services;
+using Microsoft.AspNetCore.Components;
+
+namespace AplixaTools.PDFEdit.Models;
 
 public class PdfRearrangementMutation : IPdfMutation
 {
+    [Inject] public JsInteropService JsInterop { get; set; }
+
     public int[] Arrangement = Array.Empty<int>();
 
     public PdfRearrangementMutation(int[] arrangement)
@@ -23,9 +28,10 @@ public class PdfRearrangementMutation : IPdfMutation
                 var newFile = new PreviewPage
                 {
                     Index = actualIndex,
-                    Image = file.Image,
-                    Transform = file.Transform
-                };
+                    Preview = file.Preview,
+                    Rotation = file.Rotation,
+					Size = file.Size
+				};
 
                 actualIndex++;
                 return newFile;

@@ -52,14 +52,14 @@ public class JsInteropService : DefaultJsInteropService
     /// <param name="i">The page index</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The Base64-Encoded JPEG of the page in the PDF</returns>
-    public async Task<string> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
+    public async Task<PdfPreview> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
             return null;
         }
 
-        return await JsRuntime.InvokeAsync<string>(
+        return await JsRuntime.InvokeAsync<PdfPreview>(
             Prefix + "pdfUtils.PDFtoJPEG",
             cancellationToken,
             pdf,
@@ -133,11 +133,25 @@ public class JsInteropService : DefaultJsInteropService
 		};
 	}
 
-    /// <summary>
-    /// Copy a DOM element and make it follow the mouse cursor
-    /// </summary>
-    /// <param name="element"></param>
-    public void StickElementToCursor(string element)
+	public Pos2 GetImageSize(string image)
+	{
+		var dim = JsRuntime.Invoke<float[]>(
+			Prefix + "utils.getImageSize",
+			image
+		);
+
+		return new Pos2
+		{
+			X = dim[0],
+			Y = dim[1],
+		};
+	}
+
+	/// <summary>
+	/// Copy a DOM element and make it follow the mouse cursor
+	/// </summary>
+	/// <param name="element"></param>
+	public void StickElementToCursor(string element)
     {
         JsRuntime.InvokeVoid(Prefix + "utils.stickElementToCursor", element);
     }

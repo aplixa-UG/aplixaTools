@@ -10,10 +10,10 @@
 		var idx = i;
 		var item = _items[idx];
 
-		<div 
-		id=@($"dragdropitem-{idx}") 
-		class="@_itemClasses[idx]"
-		@onmousedown="e => ItemOnMouseDown(idx)" >
+		<div
+			id=@($"dragdropitem-{idx}")
+			class="item @_itemClasses[idx]"
+			@onmousedown="e => ItemOnMouseDown(idx)" >
 
 			@ChildContent(item)
 		</div>

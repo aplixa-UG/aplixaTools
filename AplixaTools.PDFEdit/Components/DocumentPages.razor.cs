@@ -30,7 +30,7 @@ public partial class DocumentPages
     /// </summary>
     [Parameter] public EventCallback<int> OnDocumentRemoved { get; set; }
 
-    public readonly List<string> PageRenders = new();
+    public readonly List<PdfPreview> PageRenders = new();
 
     private bool _pagesRendered = false;
     private bool _addDocument = false;
@@ -68,7 +68,8 @@ public partial class DocumentPages
                     page,
                     new PreviewPage
                     {
-                        Image = PageRenders[i]
+                        Preview = PageRenders[i],
+                        Size = JsInterop.GetImageSize(PageRenders[i].Rot0deg)
                     }
                 )
             );
@@ -102,7 +103,8 @@ public partial class DocumentPages
                 page,
                 new PreviewPage
                 {
-                    Image = PageRenders[index]
+                    Preview = PageRenders[index],
+                    Size = JsInterop.GetImageSize(PageRenders[index].Rot0deg)
                 }
             )
         );

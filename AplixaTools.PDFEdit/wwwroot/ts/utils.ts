@@ -36,13 +36,13 @@
         var x = elemRect.left + container.scrollLeft - containerRect.left;
         var y = elemRect.top + container.scrollTop - containerRect.top;
 
-        var rot = parseFloat(elem.firstElementChild.getAttribute("rotation"));
-
-        if (rot == 90 || rot == 270) {
-            var topOffset = (elemRect.height - elemRect.width) / 2;
-            return [x - topOffset, y + topOffset, elemRect.height, elemRect.width];
-        }
         return [x, y, elemRect.width, elemRect.height];
+    }
+
+    export function getImageSize(img: string): number[] {
+        var el = document.createElement("img");
+        el.src = img;
+        return [el.width, el.height];
     }
 
     export function getCssProperty(elem: string, property: string): string {

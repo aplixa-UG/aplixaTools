@@ -26,7 +26,7 @@ public class PdfTransformPageMutation : IPdfMutation
 
     public List<PreviewPage> MutatePreview(List<PreviewPage> inputFiles)
     {
-        inputFiles[DocumentIndex].Transform = Transform;
+        inputFiles[DocumentIndex].Rotation = Transform.Angle;
         return inputFiles;
     }
 }

@@ -33,13 +33,9 @@ public class ElementDimensions
 	{
 		if (rot == PdfRotation.deg90 || rot == PdfRotation.deg270)
 		{
-			var w = Size.X;
-			Size.X = Size.Y;
-			Size.Y = w;
+			(Size.X, Size.Y) = (Size.Y, Size.X);
 
-            var x = Position.X;
-            Position.X = Position.Y;
-            Position.Y = x;
+            (Position.X, Position.Y) = (Position.Y, Position.X);
         }
 	}
 }

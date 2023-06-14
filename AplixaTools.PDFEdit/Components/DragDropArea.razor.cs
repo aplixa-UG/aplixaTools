@@ -31,10 +31,8 @@ public partial class DragDropArea<TItem>
 	private int _selectedItem = -1;
 	private bool _updateElementDimensions = false;
 	private bool _stickElementToCursor = false;
-	private bool _elementDimensionsProcessed = false;
 
 	private readonly List<int> _indices = new();
-	private readonly List<float> _margins = new();
 
     private List<ElementDimensions> _elementDimensions = new();
 
@@ -49,7 +47,8 @@ public partial class DragDropArea<TItem>
 	{
 		if (firstRender || _updateElementDimensions)
 		{
-			UpdateElementDimensions();
+            Console.WriteLine("Updating Element Dimensions");
+            UpdateElementDimensions();
 			_updateElementDimensions = false;
 		}
 
@@ -108,11 +107,6 @@ public partial class DragDropArea<TItem>
 
 		JsInterop.UnstickElementsFromCursor();
 
-		var ownDimensions = JsInterop.GetElementDimensions(
-			"body",
-			$"#dragdroparea-{GetHashCode()}"
-		);
-
 		var pos = JsInterop.GetMousePosInContainer($"#dragdroparea-{GetHashCode()}");
 		_itemClasses = new string[_items.Count];
 
@@ -125,25 +119,6 @@ public partial class DragDropArea<TItem>
 				MoveItem(_selectedItem, j);
 				break;
 			}
-
-			if (j + 1 < _items.Count)
-			{
-				var nextDimensions = _elementDimensions[j + 1];
-
-				var gap = new ElementDimensions
-				{
-					Position = new Pos2
-					{
-						X = 0,
-						Y = dimensions.Position.Y + dimensions.Size.Y,
-					},
-					Size = new Pos2
-					{
-						X = ownDimensions.Size.X,
-						Y = nextDimensions.Size.Y - dimensions.Size.Y
-					}
-				};
-			}
 		}
 
 		await OnItemDrop.InvokeAsync(_indices.ToArray());
@@ -152,9 +127,8 @@ public partial class DragDropArea<TItem>
         _stickElementToCursor = false;
     }
 
-    private void UpdateElementDimensions()
+    public void UpdateElementDimensions()
 	{
-		_elementDimensionsProcessed = false;
 		_elementDimensions.Clear();
 
         for (int i = 0; i < _items.Count; i++)
@@ -167,7 +141,6 @@ public partial class DragDropArea<TItem>
             _elementDimensions.Add(dimensions);
         }
 
-		_elementDimensionsProcessed = true;
 		StateHasChanged();
     }
 }

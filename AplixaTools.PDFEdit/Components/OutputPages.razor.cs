@@ -3,6 +3,7 @@ using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
 using Microsoft.AspNetCore.Components;
+using System.ComponentModel.DataAnnotations;
 
 namespace AplixaTools.PDFEdit.Components;
 
@@ -13,14 +14,14 @@ public partial class OutputPages : IDisposable {
     [Parameter] public PageSettingsModal PageSettingsModal { get; set; }
     [Parameter] public Modal ConfirmClearModal { get; set; }
 
+    public DragDropArea<PreviewPage> DragDropArea { get; set; }
     public int SelectedPage;
 
     private string _outputDocumentFileName = "merge.pdf";
     private CancellationTokenSource _previewCancellationTokenSource = new();
     private PdfFile _outputDocument = null;
     private bool _loading = false;
-    
-    public DragDropArea<PreviewPage> DragDropArea { get; set; }
+    private double _scale = 1.0;
 
     protected override void OnInitialized()
     {
@@ -64,6 +65,11 @@ public partial class OutputPages : IDisposable {
         StateHasChanged();
     }
 
+    private void ZoomSliderOnValueChanged(double value)
+    {
+        _scale = value;
+    }
+
     private void FileNameOnValueChanged(string fileName)
     {
         _outputDocumentFileName = fileName;
@@ -91,8 +97,8 @@ public partial class OutputPages : IDisposable {
     private void OnSettings(int pageIndex)
     {
         SelectedPage = pageIndex;
-        var transform = MutationService.Previews[pageIndex].Transform;
-        PageSettingsModal.Show(transform.Angle);
+        var angle = MutationService.Previews[pageIndex].Rotation;
+        PageSettingsModal.Show(angle);
     }
 
     private async Task MergeButtonOnClick()

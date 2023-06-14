@@ -1,11 +1,12 @@
 namespace AplixaTools.PDFEdit.Models;
 
 /// <summary>
-/// The Base64 encoded JPEG preview of a PDF page and it's index
+/// The Base64 encoded JPEG preview of a PDF pagel, it's index and other Information
 /// </summary>
 public class PreviewPage
 {
-    public int Index = -1;
-    public string Image = "";
-    public PdfTransform Transform = new();
+    public int Index { get; set; } = -1;
+    public PdfPreview Preview { get; set; }
+    public Pos2 Size { get; set; }
+    public PdfRotation Rotation { get; set; }
 }
