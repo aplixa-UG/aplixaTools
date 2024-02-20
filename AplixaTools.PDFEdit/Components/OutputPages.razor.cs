@@ -49,20 +49,17 @@ public partial class OutputPages : IDisposable {
         if (inputDocuments.Count == 0)
         {
             _outputDocument = null;
-            _loading = false;
-            StateHasChanged();
+            ChangeLoadingState(false);
             return;
         }
 
         _outputDocument = await Task.Run(() => PdfUtils.MergePdfFiles(inputDocuments, _outputDocumentFileName));
-        _loading = false;
-        StateHasChanged();
+        ChangeLoadingState(false);
     }
 
     public void MutationServiceOnStartLoadingRequested(object sender, EventArgs e)
     {
-        _loading = true;
-        StateHasChanged();
+        ChangeLoadingState(true);
     }
 
     private void ZoomSliderOnValueChanged(double value)
@@ -123,5 +120,12 @@ public partial class OutputPages : IDisposable {
     {
         GC.SuppressFinalize(this);
         _previewCancellationTokenSource.Dispose();
+    }
+
+    public void ChangeLoadingState(bool value)
+    {
+        _loading = value;
+        StateHasChanged();
+        JsInterop.RegisterTooltips("#output-options");
     }
 }

@@ -1,5 +1,5 @@
 .container {
-    padding: 0rem 2rem 0rem 2rem;
+    padding-left: 2rem;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -97,10 +97,12 @@
         width: min-content;
     }
 
-::deep .filename-input {
+::deep .filename-input,
+::deep .zoom-slider {
     width: 100%;
+    flex: 1;
 }
 
-::deep .zoom-slider {
-    width: 10rem;
+.footer {
+    padding-bottom: .8rem;
 }

@@ -1,6 +1,6 @@
 <div class="container">
     <div class="header">
-        <div class="options">
+        <div id ="output-options" class="options">
             <TextInput
                 Class="filename-input"
                 DefaultValue="@_outputDocumentFileName"
@@ -16,11 +16,19 @@
             />
             @if (_loading && MutationService.Files.Count > 0)
             {
-                <Spinner />
+                <div data-bs-toggle="tooltip"
+                     data-bs-placement="left"
+                     title="Dokumentenstatus (Lade...)">
+                    <Spinner />
+                </div>
             }
             else
             {
-                <Icon Href="@Icons.FileCheckmark"></Icon>
+                <div data-bs-toggle="tooltip"
+                     data-bs-placement="left"
+                     title="Dokumentenstatus (Fertig)">
+                    <Icon Href="@Icons.FileCheckmark"></Icon>
+                </div>
             }
         </div>
     </div>
@@ -40,7 +48,7 @@
             <img src="@context.Preview.GetFromRotation(context.Rotation)">
         </div>
     </DragDropArea>
-    <div class="d-flex flex-row gap-1">
+    <div class="footer d-flex flex-row gap-1">
         <button class="btn btn-primary w-100" @onclick="ClearButtonOnClick">
             <Icon Href="@Icons.TrashCan" />
             Alle Entfernen
