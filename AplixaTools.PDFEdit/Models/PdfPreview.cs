@@ -14,10 +14,10 @@ public class PdfPreview
         Console.WriteLine(rot);
         return rot switch
         {
-            PdfRotation.deg0 => Rot0deg,
-            PdfRotation.deg90 => Rot90deg,
-            PdfRotation.deg180 => Rot180deg,
-            PdfRotation.deg270 => Rot270deg,
+            PdfRotation.Deg0 => Rot0deg,
+            PdfRotation.Deg90 => Rot90deg,
+            PdfRotation.Deg180 => Rot180deg,
+            PdfRotation.Deg270 => Rot270deg,
             _ => throw new NotImplementedException()
         };
     }

@@ -52,7 +52,7 @@ public class JsInteropService : DefaultJsInteropService
     /// <param name="i">The page index</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The Base64-Encoded JPEG of the page in the PDF</returns>
-    public async Task<PdfPreview> PDFtoJPEGAsync(byte[] pdf, int i, CancellationToken cancellationToken)
+    public async Task<PdfPreview> PdFtoJpegAsync(byte[] pdf, int i, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
@@ -123,13 +123,13 @@ public class JsInteropService : DefaultJsInteropService
 			Position = new Pos2
             {
                 X = dim[0],
-                Y = dim[1],
-			},
+                Y = dim[1]
+            },
             Size = new Pos2
 			{
 				X = dim[2],
-				Y = dim[3],
-			}
+				Y = dim[3]
+            }
 		};
 	}
 
@@ -143,8 +143,8 @@ public class JsInteropService : DefaultJsInteropService
 		return new Pos2
 		{
 			X = dim[0],
-			Y = dim[1],
-		};
+			Y = dim[1]
+        };
 	}
 
 	/// <summary>

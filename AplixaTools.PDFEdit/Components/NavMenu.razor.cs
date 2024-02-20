@@ -2,7 +2,7 @@
 
 public partial class NavMenu
 {
-	private bool _showNavMenu = false;
+	private bool _showNavMenu;
 
 	private void ToggleNavMenu()
 	{

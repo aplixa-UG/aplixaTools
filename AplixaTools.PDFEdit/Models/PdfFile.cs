@@ -8,7 +8,7 @@ public class PdfFile
     /// (Optional) The name of the PDF File (e.g. "merge.pdf")
     /// </summary>
     public string Name { get; set; } = string.Empty;
-    public int PageCount { get; set; } = 0;
+    public int PageCount { get; set; }
     public byte[] Content { get; set; } = Array.Empty<byte>();
 
 	/// <summary>
@@ -37,7 +37,7 @@ public class PdfFile
         var inputDoc = new PdfDocument(new PdfReader(inputStream));
         var outputDoc = new PdfDocument(new PdfWriter(outputStream));
 
-        for (int i = startIndex; i < endIndex; i++)
+        for (var i = startIndex; i < endIndex; i++)
         {
             var newPage = inputDoc.GetPage(i + 1).CopyTo(outputDoc);
             outputDoc.AddPage(newPage);
@@ -79,38 +79,7 @@ public class PdfFile
         {
             Name = Name,
             PageCount = PageCount,
-            Content = outputStream.ToArray(),
-        };
-    }
-
-    /// <summary>
-    /// Gets the current transformation of a page in the PdfFile
-    /// </summary>
-    /// <param name="pageIndex">0-based index of the page of which the transform should be read</param>
-    /// <returns></returns>
-    public PdfTransform GetPageTransform(int pageIndex)
-    {
-        using var inputStream = new MemoryStream();
-
-        inputStream.Write(Content, 0, Content.Length);
-        inputStream.Position = 0;
-
-        var doc = new PdfDocument(new PdfReader(inputStream));
-
-        var page = doc.GetPage(pageIndex + 1);
-
-        var rotation = page.GetRotation();
-
-        var rotationIndex = rotation / 90;
-
-        var angle = rotation % 90 == 0 && rotationIndex < 4
-            ? (PdfRotation)rotationIndex
-            : PdfRotation.deg0
-            ;
-
-        return new PdfTransform
-        {
-            Angle = angle
+            Content = outputStream.ToArray()
         };
     }
 }

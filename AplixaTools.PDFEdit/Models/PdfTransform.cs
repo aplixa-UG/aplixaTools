@@ -5,5 +5,5 @@
 /// </summary>
 public class PdfTransform
 {
-    public PdfRotation Angle { get; set; } = PdfRotation.deg0;
+    public PdfRotation Angle { get; set; } = PdfRotation.Deg0;
 }

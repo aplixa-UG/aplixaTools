@@ -32,14 +32,14 @@ public partial class DocumentPages
 
     public readonly List<PdfPreview> PageRenders = new();
 
-    private bool _pagesRendered = false;
-    private bool _addDocument = false;
+    private bool _pagesRendered;
+    private bool _addDocument;
 
     protected override async Task OnInitializedAsync()
     {
-        for (int i = 0; i < Document.PageCount; i++)
+        for (var i = 0; i < Document.PageCount; i++)
         {
-            PageRenders.Add(await JsInterop.PDFtoJPEGAsync(Document.Content, i, CancellationToken.None));
+            PageRenders.Add(await JsInterop.PdFtoJpegAsync(Document.Content, i, CancellationToken.None));
             StateHasChanged();
         }
         _pagesRendered = true;
@@ -57,7 +57,7 @@ public partial class DocumentPages
         {
             _addDocument = false;
 
-            for (int i = 0; i < Document.PageCount; i++)
+            for (var i = 0; i < Document.PageCount; i++)
             {
                 var page = Document.ExtractPages(i, i + 1);
 

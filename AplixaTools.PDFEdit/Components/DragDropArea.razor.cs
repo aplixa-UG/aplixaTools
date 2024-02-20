@@ -29,12 +29,12 @@ public partial class DragDropArea<TItem>
 	private List<TItem> _items = new();
 	private string[] _itemClasses = Array.Empty<string>();
 	private int _selectedItem = -1;
-	private bool _updateElementDimensions = false;
-	private bool _stickElementToCursor = false;
+	private bool _updateElementDimensions;
+	private bool _stickElementToCursor;
 
 	private readonly List<int> _indices = new();
 
-    private List<ElementDimensions> _elementDimensions = new();
+    private readonly List<ElementDimensions> _elementDimensions = new();
 
     protected override void OnInitialized()
 	{
@@ -66,12 +66,15 @@ public partial class DragDropArea<TItem>
     /// </summary>
     public void Update(IEnumerable<TItem> items)
     {
-        _items = items.ToList();
-        _itemClasses = new string[items.Count()];
+        var enumerable = items as TItem[] ?? items.ToArray();
+        var length = enumerable.Length;
+
+		_items = enumerable.ToList();
+        _itemClasses = new string[length];
 
         _indices.Clear();
 
-        for (int i = 0; i < items.Count(); i++)
+        for (var i = 0; i < length; i++)
         {
             _indices.Add(i);
         }
@@ -111,15 +114,15 @@ public partial class DragDropArea<TItem>
 		_itemClasses = new string[_items.Count];
 
 
-		for (int j = 0; j < _items.Count; j++)
+		for (var j = 0; j < _items.Count; j++)
 		{
 			var dimensions = _elementDimensions[j];
-			if (dimensions.Contains(pos))
-			{
-				MoveItem(_selectedItem, j);
-				break;
-			}
-		}
+
+            if (!dimensions.Contains(pos)) continue;
+
+            MoveItem(_selectedItem, j);
+            break;
+        }
 
 		await OnItemDrop.InvokeAsync(_indices.ToArray());
 
@@ -131,7 +134,7 @@ public partial class DragDropArea<TItem>
 	{
 		_elementDimensions.Clear();
 
-        for (int i = 0; i < _items.Count; i++)
+        for (var i = 0; i < _items.Count; i++)
 		{
 			var query = $"#dragdropitem-{i}";
 			var dimensions = JsInterop.GetElementDimensions(

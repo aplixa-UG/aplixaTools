@@ -33,11 +33,11 @@ public partial class Modal
 
     public void Show()
     {
-        JsInterop.ShowModal($"#modal-{this.GetHashCode()}");
+        JsInterop.ShowModal($"#modal-{GetHashCode()}");
     }
 
     public void Hide()
     {
-        JsInterop.HideModal($"#modal-{this.GetHashCode()}");
+        JsInterop.HideModal($"#modal-{GetHashCode()}");
     }
 }

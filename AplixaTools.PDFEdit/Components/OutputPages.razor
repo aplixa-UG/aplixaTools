@@ -34,9 +34,8 @@
     </div>
     <DragDropArea @ref="DragDropArea" OnItemDrop="@OutputPreviewOnItemDrop" Items="@MutationService.Previews" Class="preview" TItem="PreviewPage">
         <div 
-             style=@(
-                 $"width: {(context.Rotation == PdfRotation.deg90 || context.Rotation == PdfRotation.deg270 ? context.Preview.Height * _scale : context.Preview.Width * _scale).ToHTMLString()}px;" +
-                 $"height: {(context.Rotation == PdfRotation.deg90 || context.Rotation == PdfRotation.deg270 ? context.Preview.Width * _scale : context.Preview.Height * _scale).ToHTMLString()}px;")
+             style=@($"width: {(context.Rotation is PdfRotation.Deg90 or PdfRotation.Deg270 ? context.Preview.Height * _scale : context.Preview.Width * _scale).ToHtmlString()}px;" +
+                     $"height: {(context.Rotation is PdfRotation.Deg90 or PdfRotation.Deg270 ? context.Preview.Width * _scale : context.Preview.Height * _scale).ToHtmlString()}px;")
              class="preview-image">
 
             <div class="overlay">
@@ -45,7 +44,7 @@
                     <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
                 </div>
             </div>
-            <img src="@context.Preview.GetFromRotation(context.Rotation)">
+            <img src="@context.Preview.GetFromRotation(context.Rotation)" alt="Page Preview">
         </div>
     </DragDropArea>
     <div class="footer d-flex flex-row gap-1">

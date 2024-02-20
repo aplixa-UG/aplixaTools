@@ -9,19 +9,20 @@ namespace AplixaTools.PDFEdit.Components;
 public partial class InputPages {
     [Inject] public PdfMutationQueueService MutationService { get; set; }
 
-    private bool _dragging = false;
+    private bool _dragging;
     private readonly List<PdfFile> _fileSources = new();
-    private readonly List<DocumentPages> _documentPages = new();
-    DocumentPages DocumentPagesRef
+    public readonly List<DocumentPages> DocumentPages = new();
+
+    private DocumentPages DocumentPagesRef
     {
-        set { _documentPages.Add(value); }
+        set => DocumentPages.Add(value);
     }
 
     private async Task FileInputOnChange(InputFileChangeEventArgs e)
     {
         foreach (var file in e.GetMultipleFiles(e.FileCount))
         {
-            using var inputStream = file.OpenReadStream(int.MaxValue);
+            await using var inputStream = file.OpenReadStream(int.MaxValue);
             using var inputStreamCopy = new MemoryStream();
 
             await inputStream.CopyToAsync(inputStreamCopy);

@@ -5,7 +5,7 @@ namespace AplixaTools.PDFEdit.Services;
 public class PdfMutationQueueService
 {
     public List<PdfFile> Files = new();
-    private Queue<IPdfMutation> _mutationQueue = new();
+    private readonly Queue<IPdfMutation> _mutationQueue = new();
 
     public List<PreviewPage> Previews = new();
 
@@ -40,11 +40,11 @@ public class PdfMutationQueueService
 
     public void RequestMergeUpdate()
     {
-        MergeUpdateRequested.Invoke(this, EventArgs.Empty);
+        MergeUpdateRequested?.Invoke(this, EventArgs.Empty);
     }
 
     public void RequestStartLoading()
     {
-        StartLoadingRequested.Invoke(this, EventArgs.Empty);
+        StartLoadingRequested?.Invoke(this, EventArgs.Empty);
     }
 }

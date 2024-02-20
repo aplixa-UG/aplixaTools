@@ -17,12 +17,11 @@ public partial class PageSettingsModal
     /// <summary>
     /// The selected rotation of the page
     /// </summary>
-    public PdfRotation Rotation { get => (PdfRotation)_rotation; }
+    public PdfRotation Rotation => (PdfRotation)_rotation;
 
-    private int _rotation = 0;
+    private int _rotation;
 
-    private readonly string[] _rotationOptions = new[]
-    {
+    private readonly string[] _rotationOptions = {
         "0\u00b0",
         "90\u00b0",
         "180\u00b0",
@@ -35,11 +34,6 @@ public partial class PageSettingsModal
         _rotation = (int)rotation;
         StateHasChanged();
         Modal.Show();
-    }
-
-    public void Hide()
-    {
-        Modal.Hide();
     }
 
     public async Task OnSave()

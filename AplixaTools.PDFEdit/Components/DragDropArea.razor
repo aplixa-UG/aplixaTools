@@ -1,7 +1,7 @@
 ﻿@typeparam TItem
 
 <div 
-	id=@($"dragdroparea-{this.GetHashCode()}") 
+	id=@($"dragdroparea-{GetHashCode()}") 
 	class="container @Class"
 	@onmouseup="ContainerOnMouseUp" >
 
@@ -13,7 +13,7 @@
 		<div
 			id=@($"dragdropitem-{idx}")
 			class="item @_itemClasses[idx]"
-			@onmousedown="e => ItemOnMouseDown(idx)" >
+			@onmousedown="_ => ItemOnMouseDown(idx)" >
 
 			@ChildContent(item)
 		</div>

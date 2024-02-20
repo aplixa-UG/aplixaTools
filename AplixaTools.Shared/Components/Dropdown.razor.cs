@@ -11,7 +11,7 @@ public partial class Dropdown : ComponentBase
     /// <summary>
     /// The index in the "Options"-Collection of the default selection
     /// </summary>
-    [Parameter] public int Default { get; set; } = 0;
+    [Parameter] public int Default { get; set; }
     /// <summary>
     /// Fires when the user changed the selected option
     /// </summary>
@@ -30,14 +30,5 @@ public partial class Dropdown : ComponentBase
         SelectedIndex = index;
         StateHasChanged();
         await OnValueChanged.InvokeAsync(SelectedIndex);
-    }
-
-    /// <summary>
-    /// Selects the default Option
-    /// </summary>
-    public void Reset()
-    {
-        SelectedIndex = Default;
-        StateHasChanged();
     }
 }

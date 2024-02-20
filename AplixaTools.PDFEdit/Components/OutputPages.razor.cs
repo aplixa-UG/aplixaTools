@@ -3,7 +3,6 @@ using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
 using Microsoft.AspNetCore.Components;
-using System.ComponentModel.DataAnnotations;
 
 namespace AplixaTools.PDFEdit.Components;
 
@@ -19,8 +18,8 @@ public partial class OutputPages : IDisposable {
 
     private string _outputDocumentFileName = "merge.pdf";
     private CancellationTokenSource _previewCancellationTokenSource = new();
-    private PdfFile _outputDocument = null;
-    private bool _loading = false;
+    private PdfFile _outputDocument;
+    private bool _loading;
     private double _scale = 1.0;
 
     protected override void OnInitialized()
@@ -42,7 +41,7 @@ public partial class OutputPages : IDisposable {
         MutationService.RequestStartLoading();
 
         _previewCancellationTokenSource.Cancel();
-        _previewCancellationTokenSource = new();
+        _previewCancellationTokenSource = new CancellationTokenSource();
 
         var inputDocuments = await Task.Run(MutationService.ProcessMutations);
 
@@ -71,7 +70,7 @@ public partial class OutputPages : IDisposable {
     {
         _outputDocumentFileName = fileName;
 
-        if (_outputDocument is { })
+        if (_outputDocument is not null)
         {
             _outputDocument.Name = fileName;
         }
@@ -100,10 +99,10 @@ public partial class OutputPages : IDisposable {
 
     private async Task MergeButtonOnClick()
     {
-        if (_outputDocument is not { })
+        if (_outputDocument is null)
         {
             MutationService.RequestMergeUpdate();
-            if (_outputDocument is not { })
+            if (_outputDocument is null)
             {
                 return;
             }

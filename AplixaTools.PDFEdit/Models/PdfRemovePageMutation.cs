@@ -2,7 +2,7 @@
 
 public class PdfRemovePageMutation : IPdfMutation
 {
-    public int PageIndex = -1;
+    public int PageIndex;
 
     public PdfRemovePageMutation(int pageIndex)
     {
@@ -19,7 +19,7 @@ public class PdfRemovePageMutation : IPdfMutation
     {
         var actualIndex = 0;
         var outputFiles = new List<PreviewPage>();
-        for (int i = 0; i < inputFiles.Count; i++)
+        for (var i = 0; i < inputFiles.Count; i++)
         {
             if (i == PageIndex)
             {

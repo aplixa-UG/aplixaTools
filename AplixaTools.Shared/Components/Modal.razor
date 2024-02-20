@@ -1,10 +1,10 @@
-<div class="modal fade" id="modal-@this.GetHashCode()" data-bs-backdrop='@(Static ? "static" : "")' data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-@this.GetHashCode()-Label" aria-hidden="true">
+<div class="modal fade" id="modal-@GetHashCode()" data-bs-backdrop='@(Static ? "static" : "")' data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-@GetHashCode()-Label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            @if (Title is {} || Closeable) {
+            @if (Title is not null || Closeable) {
                 <div class="modal-header">
-                    @if (Title is {}) {
-                        <h1 class="modal-title fs-5" id="modal-@this.GetHashCode()-Label">@Title</h1>
+                    @if (Title is not null) {
+                        <h1 class="modal-title fs-5" id="modal-@GetHashCode()-Label">@Title</h1>
                     }
                     @if (Closeable) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using AplixaTools.PDFEdit.Components;
 using AplixaTools.PDFEdit.Services;
 using AplixaTools.PDFEdit.Shared;
 using AplixaTools.Shared.Components;
-using iText.Kernel.Pdf;
 using AplixaTools.PDFEdit.Models;
 
 namespace AplixaTools.PDFEdit.Pages;
@@ -48,7 +46,7 @@ public partial class Combine : IDisposable
                 0,
                 new PdfTransform
                 {
-                    Angle = PageSettingsModal.Rotation,
+                    Angle = PageSettingsModal.Rotation
                 }
             )
         );

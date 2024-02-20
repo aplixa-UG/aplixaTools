@@ -2,8 +2,8 @@
     <label for="drag-file-input"
             class="drag-and-drop-input"
             style="@(_dragging ? "display: initial" : "display: none")"
-            @onmouseout='() => { _dragging = false; StateHasChanged(); }'
-            @ondragleave='() => { _dragging = false; StateHasChanged(); }'>
+            @onmouseout="() => { _dragging = false; StateHasChanged(); }"
+            @ondragleave="() => { _dragging = false; StateHasChanged(); }">
         <InputFile  id="drag-file-input"
                     OnChange="FileInputOnChange"
                     accept=".pdf"
@@ -11,7 +11,7 @@
     </label>
     <h6>Dateien</h6>
     <div class="file-list">
-        @for (int i = 0; i < _fileSources.Count; i++)
+        @for (var i = 0; i < _fileSources.Count; i++)
         {
             var index = i;
             var file = _fileSources[index];

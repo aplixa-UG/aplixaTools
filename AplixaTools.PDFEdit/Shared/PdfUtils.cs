@@ -20,17 +20,17 @@ public static class PdfUtils
     {
         // Set up streams for the PdfWriter to write to and for PDF/A to get its color profile
         using var outputStream = new MemoryStream();
-        using var sRGBstream = new MemoryStream();
+        using var sRgbStream = new MemoryStream();
 
-        sRGBstream.Write(ICCProfiles.sRGB_IEC61966_2_1, 0, ICCProfiles.sRGB_IEC61966_2_1.Length);
-        sRGBstream.Position = 0;
+        sRgbStream.Write(IccProfiles.SRgbIec6196621, 0, IccProfiles.SRgbIec6196621.Length);
+        sRgbStream.Position = 0;
 
 		// Initialize PDF/A-3a Document with sRGB IEC61966-2.1: https://www.color.org/black_scaled_2009_srgb.xalter
 		var pdf = new PdfADocument(
             new PdfWriter(outputStream),
             PdfAConformanceLevel.PDF_A_3A,
             new PdfOutputIntent("Custom", "", "https://www.color.org",
-                "sRGB IEC61966-2.1", sRGBstream)
+                "sRGB IEC61966-2.1", sRgbStream)
         );
         pdf.SetTagged();
         pdf.GetCatalog().SetLang(new PdfString("de-DE"));
@@ -51,28 +51,36 @@ public static class PdfUtils
         }
 
         // The /Interpolate Key must be false for PDF/A-3a and Dictionaries of type ExtGState mustn't have the key TR
-        for (int i = 0; i < pdf.GetNumberOfPdfObjects(); i++)
+        for (var i = 0; i < pdf.GetNumberOfPdfObjects(); i++)
         {
             var pdfObj = pdf.GetPdfObject(i + 1);
-            if (pdfObj is { } && pdfObj.IsStream())
+            switch (pdfObj)
             {
-                var stream = (PdfStream)pdfObj;
-
-                if (stream.ContainsKey(PdfName.Interpolate))
+                case not null when pdfObj.IsStream():
                 {
-                    stream.Put(PdfName.Interpolate, new PdfBoolean(false));
-                }
-			}
-            else if (pdfObj is { } && pdfObj.IsDictionary())
-			{
-				var dict = (PdfDictionary)pdfObj;
+                    var stream = (PdfStream)pdfObj;
 
-				if (dict.Get(PdfName.Type) is { } type && type.ToString() == "/ExtGState")
-				{
-					dict.Remove(PdfName.TR);
-				}
-			}
-		}
+                    if (stream.ContainsKey(PdfName.Interpolate))
+                    {
+                        stream.Put(PdfName.Interpolate, new PdfBoolean(false));
+                    }
+
+                    break;
+                }
+
+                case not null when pdfObj.IsDictionary():
+                {
+                    var dict = (PdfDictionary)pdfObj;
+
+                    if (dict.Get(PdfName.Type) is { } type && type.ToString() == "/ExtGState")
+                    {
+                        dict.Remove(PdfName.TR);
+                    }
+
+                    break;
+                }
+            }
+        }
 
         // Get the number of pages and close the document afterwards
         var numberOfPages = pdf.GetNumberOfPages();

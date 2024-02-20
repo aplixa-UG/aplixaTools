@@ -3,9 +3,9 @@
 		@Options.ElementAt(SelectedIndex)
 	</button>
 	<ul class="dropdown-menu">
-		@for (int i = 0; i < Options.Count(); i++) {
+		@for (var i = 0; i < Options.Count(); i++) {
 			var index = i;
-			<li><a @onclick="async _ => await Select(index)" class="dropdown-item">@Options.ElementAt(i)</a></li>
+			<li><a @onclick="async _ => await Select(index)" class="dropdown-item">@Options.ElementAt(index)</a></li>
 		}
 	</ul>
 

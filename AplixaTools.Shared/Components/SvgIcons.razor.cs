@@ -2,7 +2,7 @@
 
 public partial class SvgIcons
 {
-    private string Trim(string toTrim)
+    private static string Trim(string toTrim)
     {
         return toTrim[1..];
     }

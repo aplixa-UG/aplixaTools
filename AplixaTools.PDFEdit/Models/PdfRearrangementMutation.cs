@@ -7,7 +7,7 @@ public class PdfRearrangementMutation : IPdfMutation
 {
     [Inject] public JsInteropService JsInterop { get; set; }
 
-    public int[] Arrangement = Array.Empty<int>();
+    public int[] Arrangement;
 
     public PdfRearrangementMutation(int[] arrangement)
     {
