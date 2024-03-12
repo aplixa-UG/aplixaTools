@@ -33,21 +33,21 @@ public partial class Modal
 
     private bool _visible = false;
 
-    public void Show()
+    public async Task Show()
     {
-        JsInterop.ShowModal($"#modal-{GetHashCode()}");
+        await JsInterop.ShowModal($"#modal-{GetHashCode()}");
         _visible = true;
     }
 
-    public void Hide()
+    public async Task Hide()
     {
-        JsInterop.HideModal($"#modal-{GetHashCode()}");
+        await JsInterop.HideModal($"#modal-{GetHashCode()}");
         _visible = false;
     }
 
-    public void Toggle()
+    public async void Toggle()
     {
-        if (_visible) Hide();
-        else Show();
+        if (_visible) await Hide();
+        else await Show();
     }
 }

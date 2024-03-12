@@ -12,17 +12,17 @@ public class DefaultJsInteropService
         JsRuntime = jsRuntime;
     }
 
-    public void ShowModal(string id)
+    public async Task ShowModal(string id)
     {
-        JsRuntime.InvokeVoid(
+        await JsRuntime.InvokeVoidAsync(
             Prefix + "modal.show",
             id
         );
     }
 
-    public void HideModal(string id)
+    public async Task HideModal(string id)
     {
-        JsRuntime.InvokeVoid(
+        await JsRuntime.InvokeVoidAsync(
             Prefix + "modal.hide",
             id
         );

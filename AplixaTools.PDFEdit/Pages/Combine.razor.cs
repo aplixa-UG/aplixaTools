@@ -27,13 +27,13 @@ public partial class Combine : IDisposable
         base.OnAfterRender(firstRender);
     }
 
-    private void ConfirmClearOnClick()
+    private async void ConfirmClearOnClick()
     {
         MutationService.RequestStartLoading();
 
         MutationService.QueueMutation(new PdfClearMutation());
 
-        ConfirmClearModal.Hide();
+        await ConfirmClearModal.Hide();
     }
 
     private void PageSettingsOnSave()

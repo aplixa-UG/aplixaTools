@@ -36,23 +36,37 @@ public partial class OutputPages : IDisposable {
         StateHasChanged();
     }
 
-    public async void MutationServiceOnMergeUpdateRequested(object sender, EventArgs e)
+    public void MutationServiceOnMergeUpdateRequested(object sender, EventArgs e)
     {
+        Console.WriteLine("Merge 1");
         MutationService.RequestStartLoading();
 
         _previewCancellationTokenSource.Cancel();
         _previewCancellationTokenSource = new CancellationTokenSource();
 
-        var inputDocuments = await Task.Run(MutationService.ProcessMutations);
+        InvokeAsync(ProcessMutationsAsync);
+    }
 
-        if (inputDocuments.Count == 0)
+    private void ProcessMutationsAsync()
+    {
+        Console.WriteLine("Merge 2");
+        var inputDocuments = MutationService.ProcessMutations();
+
+        if (inputDocuments is null || inputDocuments.Count == 0)
         {
             _outputDocument = null;
             ChangeLoadingState(false);
             return;
         }
 
-        _outputDocument = await Task.Run(() => PdfUtils.MergePdfFiles(inputDocuments, _outputDocumentFileName));
+        InvokeAsync(() => MergeMutation(inputDocuments));
+    }
+
+    private void MergeMutation(List<PdfFile> inputDocuments)
+    {
+        Console.WriteLine("Merge 3");
+
+        _outputDocument = PdfUtils.MergePdfFiles(inputDocuments, _outputDocumentFileName);
         ChangeLoadingState(false);
     }
 
@@ -110,9 +124,9 @@ public partial class OutputPages : IDisposable {
         await JsInterop.DownloadByteArrayAsync(_outputDocument.Name, _outputDocument.Content, CancellationToken.None);
     }
 
-    private void ClearButtonOnClick()
+    private async void ClearButtonOnClick()
     {
-        ConfirmClearModal.Show();
+        await ConfirmClearModal.Show();
     }
 
     public void Dispose()

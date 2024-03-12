@@ -28,17 +28,17 @@ public partial class PageSettingsModal
         "270\u00b0"
     };
 
-    public void Show(PdfRotation rotation)
+    public async Task Show(PdfRotation rotation)
     {
         RotationDropdown.SelectedIndex = (int)rotation;
         _rotation = (int)rotation;
         StateHasChanged();
-        Modal.Show();
+        await Modal.Show();
     }
 
     public async Task OnSave()
     {
-        Modal.Hide();
+        await Modal.Hide();
         await OnSaved.InvokeAsync();
     }
 

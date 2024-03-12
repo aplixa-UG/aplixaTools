@@ -15,6 +15,7 @@ public class PdfMutationQueueService
 
     public void QueueMutation(IPdfMutation mutation)
     {
+        Console.WriteLine("Mutation Queued");
         Previews = mutation.MutatePreview(Previews);
         PreviewUpdated?.Invoke(
             this,

@@ -23,11 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
+    <Folder Include="Extensions\" /> 
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\assets\logo.svg" />
+	  <None Include="wwwroot\assets\logo.svg" />
+	  <None Include="wwwroot\assets\banner.svg" />
   </ItemGroup>
 
 </Project>
