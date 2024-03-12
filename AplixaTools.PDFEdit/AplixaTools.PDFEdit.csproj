@@ -26,4 +26,8 @@
     <Folder Include="Extensions\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\assets\logo.svg" />
+  </ItemGroup>
+
 </Project>

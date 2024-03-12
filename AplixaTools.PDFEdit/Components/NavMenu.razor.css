@@ -19,7 +19,7 @@
 
 ::deep .title {
     font-weight: 900;
-    font-size: 1.5rem;
+    height: 36px;
     margin-inline: 1rem;
     color: #ffffff;
     text-decoration: none;
@@ -167,4 +167,8 @@
 
 ::deep #logo {
     height: 36px;
+}
+
+h3 {
+    text-align: left;
 }

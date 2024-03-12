@@ -31,13 +31,23 @@ public partial class Modal
     /// </summary>
     [Parameter] public bool Static { get; set; } = true;
 
+    private bool _visible = false;
+
     public void Show()
     {
         JsInterop.ShowModal($"#modal-{GetHashCode()}");
+        _visible = true;
     }
 
     public void Hide()
     {
         JsInterop.HideModal($"#modal-{GetHashCode()}");
+        _visible = false;
+    }
+
+    public void Toggle()
+    {
+        if (_visible) Hide();
+        else Show();
     }
 }

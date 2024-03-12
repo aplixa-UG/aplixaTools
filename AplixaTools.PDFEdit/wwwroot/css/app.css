@@ -24,34 +24,22 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 900;
+    font-weight: bold;
     margin: 0 0 1rem 0;
     text-align: center;
-    letter-spacing: -3px;
+    letter-spacing: .01em;
 }
 
 h1 {
-    font-size: 8rem;
+    font-size: 3rem;
 }
 
 h2 {
-    font-size: 7rem;
+    font-size: 2.25rem;
 }
 
 h3 {
-    font-size: 6rem;
-}
-
-h4 {
-    font-size: 5rem;
-}
-
-h5 {
-    font-size: 4rem;
-}
-
-h6 {
-    font-size: 3rem;
+    font-size: 1.5rem;
 }
 
 section {

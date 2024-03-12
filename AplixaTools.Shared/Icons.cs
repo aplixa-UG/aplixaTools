@@ -15,4 +15,5 @@ public class Icons
     public const string SignMergeRight = "#sign-merge-right";
     public const string FileCheckmark = "#file-checkmark";
     public const string CalenderCheckmark = "#calender-checkmark";
+    public const string Info = "#info";
 }

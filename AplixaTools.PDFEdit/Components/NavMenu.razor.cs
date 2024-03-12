@@ -1,7 +1,11 @@
-﻿namespace AplixaTools.PDFEdit.Components;
+﻿using AplixaTools.Shared.Components;
+
+namespace AplixaTools.PDFEdit.Components;
 
 public partial class NavMenu
 {
+	protected Modal InfoModal { get; set; }
+
 	private bool _showNavMenu;
 
 	private void ToggleNavMenu()
