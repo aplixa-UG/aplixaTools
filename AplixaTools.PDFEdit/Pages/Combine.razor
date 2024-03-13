@@ -1,0 +1,24 @@
+﻿<PageTitle>PDFEdit - Kombinieren</PageTitle>
+
+<Modal @ref="ConfirmClearModal" Title="Bestätigen">
+    <Content>
+        <span>Wollen sie wirklich ihr gesamtes Dokument löschen?</span>
+    </Content>
+    <Footer>
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Nein</button>
+        <button type="button" class="btn btn-danger" @onclick="_ => ConfirmClearOnClick()">Ja</button>
+    </Footer>
+</Modal>
+
+<PageSettingsModal
+    @ref="PageSettingsModal"
+    OnSaved="PageSettingsOnSave"
+/>
+
+<section>
+	<InputPages />
+    <OutputPages
+        @ref="OutputPages"
+        PageSettingsModal="PageSettingsModal"
+        ConfirmClearModal="ConfirmClearModal" />
+</section>

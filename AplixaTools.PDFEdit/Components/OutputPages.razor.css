@@ -1,0 +1,108 @@
+.container {
+    padding-left: 2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 480px;
+}
+
+.preview-wrapper {
+    display: grid;
+    place-items: center;
+    width: 100%;
+}
+
+.preview-image {
+    position: relative;
+    width: min-content;
+    box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.25);
+}
+
+.preview-image .overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(41, 41, 41, .7);
+    opacity: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    transition: opacity 500ms ease;
+    cursor: grab;
+}
+
+.preview-image:hover .overlay {
+    opacity: 1;
+}
+
+    .preview-image .overlay ::deep svg {
+        width: 3rem;
+        height: 3rem;
+        cursor: pointer;
+    }
+
+    .preview-image .overlay > div {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        transform-box: border-box;
+    }
+
+    .preview-image img {
+        width: 100%;
+        height: 100%;
+    }
+
+.header, .header .options {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+}
+
+    .header .options {
+        padding-top: .8rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+        .header .options ::deep .loader-container {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .header .options ::deep .loader {
+            font-size: 6px;
+        }
+
+        .header .options ::deep svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+::deep .preview {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+    ::deep .preview .item {
+        margin: 0 auto;
+        width: min-content;
+    }
+
+::deep .filename-input,
+::deep .zoom-slider {
+    width: 100%;
+    flex: 1;
+}
+
+.footer {
+    padding-bottom: .8rem;
+}

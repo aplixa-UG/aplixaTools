@@ -1,0 +1,21 @@
+﻿section {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+section > ::deep div {
+    scroll-snap-align: start;
+    width: 100%;
+}
+
+@media screen and (max-width: 990px) {
+    section {
+        flex-direction: column;
+    }
+
+    section > ::deep div {
+        min-height: calc(100vh - var(--top-bar-height));
+    }
+}

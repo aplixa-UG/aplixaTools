@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "moduleResolution": "Node",
+      "declaration": false,
+      "declarationMap": false,
+      "composite": false,
+      "esModuleInterop": true,
+      "outFile": "wwwroot/js/site.js",
+      "target": "es6",
+      "removeComments": false,
+      "sourceMap": true,
+      "lib": [
+        "es6",
+        "dom"
+      ],
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "typeRoots": [
+        "wwwroot/lib/types"
+      ],
+      "baseUrl": ".",
+      "paths": {
+        "@popperjs/core": [ "wwwroot/lib/popperjs/core" ]
+      }
+    },
+    "include": [
+      "wwwroot/ts/**/*.ts"
+    ]
+  }

@@ -1,0 +1,10 @@
+﻿<input
+	class="form-range @Class"
+	type="range" 
+	min="@Min.ToHtmlString()" 
+	max="@Max.ToHtmlString()" 
+	step="@Step.ToHtmlString()" 
+	id="rangeinput-@GetHashCode()"
+	value="@((Max - Min) / 2)"
+	@onchange="OnChange"
+>

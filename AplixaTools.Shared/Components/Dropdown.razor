@@ -1,0 +1,12 @@
+﻿<div class="dropdown">
+	<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+		@Options.ElementAt(SelectedIndex)
+	</button>
+	<ul class="dropdown-menu">
+		@for (var i = 0; i < Options.Count(); i++) {
+			var index = i;
+			<li><a @onclick="async _ => await Select(index)" class="dropdown-item">@Options.ElementAt(index)</a></li>
+		}
+	</ul>
+
+</div>

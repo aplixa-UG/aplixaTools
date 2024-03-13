@@ -1,0 +1,62 @@
+.container {
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 22px 7px rgba(0, 0, 0, 0.25);
+    border-radius: 1rem;
+}
+
+.pages {
+    position: relative;
+    height: 150px;
+    padding-top: 1rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    overflow-y: auto;
+    padding-inline: 1rem;
+}
+
+.pages > .page {
+    position: relative;
+    display: block;
+    height: 90%;
+    cursor: pointer;
+    box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.25);
+}
+
+    .pages > .page > img {
+        height: 100%;
+    }
+
+    .pages > .page .overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(41, 41, 41, .7);
+        opacity: 0;
+        display: grid;
+        place-items: center;
+        color: white;
+        transition: opacity 500ms ease;
+    }
+
+    .pages > .page:hover .overlay {
+        opacity: 1;
+    }
+
+    .pages > .page .overlay ::deep svg {
+        width: 2rem;
+        height: 2rem;
+    }
+
+.doc-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: var(--bs-body-primary);
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}

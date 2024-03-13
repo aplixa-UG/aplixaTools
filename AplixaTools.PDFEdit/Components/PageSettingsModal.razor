@@ -1,0 +1,18 @@
+<Modal @ref="Modal" Title="Seiteneinstellungen">
+    <Content>
+        <div class="d-flex flex-column gap-1">
+            <div class="option">
+                Rotation
+                <Dropdown 
+                    @ref="RotationDropdown"
+                    Options="_rotationOptions"
+                    OnValueChanged="RotationDropdownOnValueChanged"
+                />
+            </div>
+        </div>
+    </Content>
+    <Footer>
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Abbrechen</button>
+        <button type="button" class="btn btn-success" @onclick="async _ => await OnSave()">Speichern</button>
+    </Footer>
+</Modal>

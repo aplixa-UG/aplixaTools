@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="header">
+        <div id ="output-options" class="options">
+            <TextInput
+                Class="filename-input"
+                DefaultValue="@_outputDocumentFileName"
+                Placeholder="Dateiname"
+                ValueChanged="FileNameOnValueChanged"
+            />
+            <RangeInput
+                Class="zoom-slider"
+                Min="0"
+                Max="2"
+                Step=".1"
+                OnValueChanged="ZoomSliderOnValueChanged"
+            />
+            @if (_loading && MutationService.Files.Count > 0)
+            {
+                <div data-bs-toggle="tooltip"
+                     data-bs-placement="left"
+                     title="Dokumentenstatus (Lade...)">
+                    <Spinner />
+                </div>
+            }
+            else
+            {
+                <div data-bs-toggle="tooltip"
+                     data-bs-placement="left"
+                     title="Dokumentenstatus (Fertig)">
+                    <Icon Href="@Icons.FileCheckmark"></Icon>
+                </div>
+            }
+        </div>
+    </div>
+    <DragDropArea @ref="DragDropArea" OnItemDrop="@OutputPreviewOnItemDrop" Items="@MutationService.Previews" Class="preview" TItem="PreviewPage">
+        <div 
+             style=@($"width: {(context.Rotation is PdfRotation.Deg90 or PdfRotation.Deg270 ? context.Preview.Height * _scale : context.Preview.Width * _scale).ToHtmlString()}px;" +
+                     $"height: {(context.Rotation is PdfRotation.Deg90 or PdfRotation.Deg270 ? context.Preview.Width * _scale : context.Preview.Height * _scale).ToHtmlString()}px;")
+             class="preview-image">
+
+            <div class="overlay">
+                <div>
+                    <div data-clickable="true" @onclick="_ => OnPageRemoved(context.Index)"><Icon Href="@Icons.TrashCan" /></div>
+                    <div data-clickable="true" @onclick="_ => OnSettings(context.Index)"><Icon Href="@Icons.Cogwheel" /></div>
+                </div>
+            </div>
+            <img src="@context.Preview.GetFromRotation(context.Rotation)" alt="Page Preview">
+        </div>
+    </DragDropArea>
+    <div class="footer d-flex flex-row gap-1">
+        <button class="btn btn-primary w-100" @onclick="ClearButtonOnClick">
+            <Icon Href="@Icons.TrashCan" />
+            Alle Entfernen
+        </button>
+        <button class="btn btn-primary w-100" @onclick="MergeButtonOnClick">
+            <Icon Href="@Icons.Download" />
+            Zusammenführen
+        </button>
+    </div>
+</div>
