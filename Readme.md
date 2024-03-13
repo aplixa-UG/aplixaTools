@@ -1,11 +1,15 @@
-﻿<div style="width: 100%; height: 200px; display: grid; place-items: center; box-sizing: border-box;">
-	<img style="width: 100%; max-width: 300px" src="./AplixaTools.PDFEdit/wwwroot/assets/logo.svg" />
-</div>
-<div style="display: flex; gap: .5rem; align-items: center; justify-content: center">
+﻿<p align="center">
+	<br>
+	<br>
+	<img width="500" src="./AplixaTools.PDFEdit/wwwroot/assets/logo.svg" />
+	<br>
+	<br>
+</p>
+<p align="center">
 	<img src="https://badgen.net/github/release/BlackBirdTV/ObjectiveLearn/stable?color=#5760C2"> <!-- TODO: abändern -->
 	<img src="https://badgen.net/github/commits/BlackBirdTV/ObjectiveLearn?color=#5760C2"> <!-- TODO: abändern -->
 	<img src="https://badgen.net/github/issues/BlackBirdTV/ObjectiveLearn?color=#5760C2"> <!-- TODO: abändern -->
-</div>
+</p>
 
 # aplixa Tools
 :de: aplixa Tools ist eine Sammlung von Online-Werkzeugen, bereitgestellt und entwickelt von der aplixa GmbH
