@@ -6,9 +6,9 @@
 	<br>
 </p>
 <p align="center">
-	<img src="https://badgen.net/github/release/BlackBirdTV/ObjectiveLearn/stable?color=#5760C2"> <!-- TODO: abändern -->
-	<img src="https://badgen.net/github/commits/BlackBirdTV/ObjectiveLearn?color=#5760C2"> <!-- TODO: abändern -->
-	<img src="https://badgen.net/github/issues/BlackBirdTV/ObjectiveLearn?color=#5760C2"> <!-- TODO: abändern -->
+	<img src="https://badgen.net/github/release/aplixa-UG/aplixaTools/stable?color=#5760C2">
+	<img src="https://badgen.net/github/commits/aplixa-UG/aplixaTools?color=#5760C2">
+	<img src="https://badgen.net/github/issues/aplixa-UG/aplixaTools?color=#5760C2">
 </p>
 
 # aplixa Tools
